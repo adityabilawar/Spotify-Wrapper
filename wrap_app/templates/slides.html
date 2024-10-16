@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Your Spotify Top Tracks</h2>
+<ul>
+    {% for track in tracks %}
+    <li>{{ track.name }} by {{ track.artists.0.name }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}
