@@ -4,6 +4,10 @@ from django.contrib.auth.models import User
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from datetime import date
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def home_view(request):
     return render(request, 'base.html')
