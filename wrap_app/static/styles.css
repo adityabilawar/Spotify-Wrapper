@@ -1,0 +1,41 @@
+/* Default styles for larger screens */
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+header nav a {
+    margin-right: 15px;
+    text-decoration: none;
+}
+
+/* Mobile styles */
+@media only screen and (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    header nav a {
+        display: block;
+        margin: 5px 0;
+    }
+
+    ul {
+        padding-left: 0;
+    }
+
+    ul li {
+        list-style-type: none;
+        margin-bottom: 10px;
+    }
+}
+
+/* Dark mode */
+.dark-mode {
+    background-color: #121212;
+    color: white;
+}
+
+.dark-mode a {
+    color: lightblue;
+}
