@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Your Duo-Wrapped</h2>
+<ul>
+    {% for user_track, friend_track in duo_tracks %}
+    <li>
+        <strong>Your Track:</strong> {{ user_track.name }} by {{ user_track.artists.0.name }}<br>
+        <strong>Friend's Track:</strong> {{ friend_track.name }} by {{ friend_track.artists.0.name }}
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
