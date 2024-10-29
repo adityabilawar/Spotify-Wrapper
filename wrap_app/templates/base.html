@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spotify Wrapped</title>
-    <link rel="stylesheet" href="{% static 'wrap_app/styles.css' %}">
-    <script src="{% static 'wrap_app/darkmode.js' %}"></script>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'wrap_app/static/styles.css' %}">
+    <script src="{% static 'wrap_app/static/darkmode.js' %}"></script>
     <style>
         body {
             background-color: #121212; /* Dark mode default */
