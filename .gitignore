@@ -1,3 +1,6 @@
 /.venv
 /venv
 /.env
+/__pycache__
+/wrap_app/__pycache__
+/spotify_wrapper/__pycache__
