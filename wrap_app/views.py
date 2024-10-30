@@ -61,6 +61,7 @@ def spotify_profile(request):
 
     profile_response = requests.get(SPOTIFY_API_URL, headers=headers)
     profile_data = profile_response.json()
+    profile_data["product"] = profile_data["product"][0].upper() + profile_data["product"][1:]
     top_song = get_top_song(access_token) if access_token else None
 
     context = {
@@ -83,7 +84,8 @@ def get_top_song(access_token):
                 'title': top_track['name'],
                 'artist': top_track['artists'][0]['name'],
                 'album': top_track['album']['name'],
-                'play_count': 'N/A'  # Spotify does not provide play count in this endpoint
+                'popularity': top_track['popularity'],
+                'image_url': top_track['album']['images'][0]['url']
             }
     return None
 def logout_view(request):
