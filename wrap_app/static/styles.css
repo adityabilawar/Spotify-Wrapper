@@ -1,41 +1,96 @@
-/* Default styles for larger screens */
+/* Reset and base styles */
+:root {
+    --primary-color: #007bff;
+    --text-color: #333;
+    --bg-color: #fff;
+    --nav-spacing: 1rem;
+    --container-padding: 1.25rem;
+    --transition-speed: 0.3s;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    padding: 20px;
+    font-family: system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background: var(--bg-color);
+    padding: var(--container-padding);
+    min-height: 100vh;
 }
 
-header nav a {
-    margin-right: 15px;
+/* Navigation styles */
+header {
+    margin-bottom: 2rem;
+}
+
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--nav-spacing);
+}
+
+nav a {
+    color: var(--primary-color);
     text-decoration: none;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: background-color var(--transition-speed);
 }
 
-/* Mobile styles */
-@media only screen and (max-width: 600px) {
-    body {
-        padding: 10px;
+nav a:hover,
+nav a:focus {
+    background-color: rgba(0, 123, 255, 0.1);
+    text-decoration: underline;
+}
+
+/* List styles */
+ul {
+    padding-left: 1.5rem;
+    margin: 1rem 0;
+}
+
+ul li {
+    margin-bottom: 0.75rem;
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text-color: #e1e1e1;
+        --bg-color: #121212;
+        --primary-color: #66b3ff;
+    }
+}
+
+/* Responsive styles */
+@media screen and (max-width: 600px) {
+    :root {
+        --container-padding: 1rem;
+        --nav-spacing: 0.5rem;
     }
 
-    header nav a {
-        display: block;
-        margin: 5px 0;
+    nav {
+        flex-direction: column;
+    }
+
+    nav a {
+        padding: 0.75rem;
+        background-color: rgba(0, 123, 255, 0.05);
     }
 
     ul {
-        padding-left: 0;
-    }
-
-    ul li {
-        list-style-type: none;
-        margin-bottom: 10px;
+        padding-left: 1rem;
     }
 }
 
-/* Dark mode */
-.dark-mode {
-    background-color: #121212;
-    color: white;
-}
-
-.dark-mode a {
-    color: lightblue;
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+    }
 }
