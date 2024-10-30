@@ -61,5 +61,28 @@ def spotify_profile(request):
 
     profile_response = requests.get(SPOTIFY_API_URL, headers=headers)
     profile_data = profile_response.json()
+    top_song = get_top_song(access_token) if access_token else None
 
-    return render(request, 'spotify_profile.html', {'user_profile': profile_data})
+    context = {
+        'user_profile': profile_data,
+        'top_song': top_song,
+    }
+    return render(request, 'spotify_profile.html', context)
+
+def get_top_song(access_token):
+    headers = {
+        'Authorization': f'Bearer {access_token}'
+    }
+    url = 'https://api.spotify.com/v1/me/top/tracks?limit=1'
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        data = response.json()
+        if data['items']:
+            top_track = data['items'][0]  # Get the top track (most listened to)
+            return {
+                'title': top_track['name'],
+                'artist': top_track['artists'][0]['name'],
+                'album': top_track['album']['name'],
+                'play_count': 'N/A'  # Spotify does not provide play count in this endpoint
+            }
+    return None

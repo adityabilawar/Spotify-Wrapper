@@ -5,4 +5,14 @@
     <p>Email: {{ user_profile.email }}</p>
     <p>Country: {{ user_profile.country }}</p>
     <p>Product: {{ user_profile.product }}</p>
+
+    {% if top_song %}
+        <h3>Most Listened To Song</h3>
+        <p>Title: {{ top_song.title }}</p>
+        <p>Artist: {{ top_song.artist }}</p>
+        <p>Album: {{ top_song.album }}</p>
+        <p>Play Count: {{ top_song.play_count }}</p>
+    {% else %}
+        <p>No data available for top song.</p>
+    {% endif %}
 {% endblock %}
