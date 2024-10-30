@@ -21,7 +21,7 @@ def home_view(request):
 
 def spotify_login(request):
     """Initiates the Spotify OAuth flow by redirecting the user to the authorization page."""
-    scopes = 'user-read-private user-read-email'
+    scopes = 'user-read-private user-read-email user-top-read'
     auth_url = f"{SPOTIFY_AUTH_URL}?response_type=code&client_id={SPOTIFY_CLIENT_ID}&redirect_uri={SPOTIFY_REDIRECT_URI}&scope={scopes}"
     return redirect(auth_url)
 
