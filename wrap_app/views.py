@@ -86,3 +86,7 @@ def get_top_song(access_token):
                 'play_count': 'N/A'  # Spotify does not provide play count in this endpoint
             }
     return None
+def logout_view(request):
+    """Clears the session and logs the user out."""
+    request.session.flush()  # Clears the session, logging the user out
+    return redirect('home')  # Redirect to the home page
