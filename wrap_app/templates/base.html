@@ -94,15 +94,32 @@
         const darkModeToggle = document.getElementById('darkModeToggle');
         const body = document.body;
 
+        // Function to set the mode based on localStorage
+        function setMode() {
+            const isLightMode = localStorage.getItem('lightMode') === 'true';
+            if (isLightMode) {
+                body.classList.add('light-mode');
+                darkModeToggle.textContent = 'Switch to Dark Mode';
+            } else {
+                body.classList.remove('light-mode');
+                darkModeToggle.textContent = 'Switch to Light Mode';
+            }
+        }
+
+        // Initial mode setup
+        setMode();
+
         darkModeToggle.addEventListener('click', () => {
             body.classList.toggle('light-mode');
 
-            if (body.classList.contains('light-mode')) {
-                darkModeToggle.textContent = 'Switch to Dark Mode';
-            } else {
-                darkModeToggle.textContent = 'Switch to Light Mode';
-            }
+            // Save the mode preference in localStorage
+            const isLightMode = body.classList.contains('light-mode');
+            localStorage.setItem('lightMode', isLightMode);
+
+            // Update button text
+            darkModeToggle.textContent = isLightMode ? 'Switch to Dark Mode' : 'Switch to Light Mode';
         });
     </script>
 </body>
+
 </html>
