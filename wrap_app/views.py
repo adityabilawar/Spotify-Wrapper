@@ -119,9 +119,16 @@ def get_top_artists(access_token, limit=3):
         data = response.json()
         artists = []
         for artist in data['items']:
+            genre = artist['genres'][0] if artist['genres'] else "Unknown Genre"
+            if genre != "Unknown Genre":
+                words = genre.split()
+                genre = ''
+                for word in words:
+                    genre += ' ' + word[0].upper() + word[1:]
+                genre = genre.strip()
             artists.append({
                 'name': artist['name'],
-                'genre': artist['genres'][0] if artist['genres'] else "Unknown Genre",
+                'genre': genre,
                 'image_url': artist['images'][0]['url'] if artist['images'] else None
             })
         return artists
