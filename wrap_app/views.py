@@ -63,10 +63,11 @@ def spotify_profile(request):
     profile_data = profile_response.json()
     profile_data["product"] = profile_data["product"][0].upper() + profile_data["product"][1:]
     top_song = get_top_song(access_token) if access_token else None
-
+    top_artists = get_top_artists(access_token) if access_token else None
     context = {
         'user_profile': profile_data,
         'top_song': top_song,
+        'top_artists': top_artists,
     }
     return render(request, 'spotify_profile.html', context)
 
@@ -92,3 +93,22 @@ def logout_view(request):
     """Clears the session and logs the user out."""
     request.session.flush()  # Clears the session, logging the user out
     return redirect('home')  # Redirect to the home page
+
+def get_top_artists(access_token, limit=3):
+    headers = {
+        'Authorization': f'Bearer {access_token}'
+    }
+    url = f'https://api.spotify.com/v1/me/top/artists?limit={limit}'
+    response = requests.get(url, headers=headers)
+
+    if response.status_code == 200:
+        data = response.json()
+        artists = []
+        for artist in data['items']:
+            artists.append({
+                'name': artist['name'],
+                'genre': artist['genres'][0] if artist['genres'] else "Unknown Genre",
+                'image_url': artist['images'][0]['url'] if artist['images'] else None
+            })
+        return artists
+    return []
