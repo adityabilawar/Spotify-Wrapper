@@ -18,7 +18,15 @@
         <div>
             <img src="{{ top_song.image_url }}" alt="Album cover" style="max-width: 165px; margin-right: 755px; border:5px solid #1DB954;">
         </div>
-    </div>
+        </div>
+        {% if top_song.preview_url %}
+            <audio controls>
+                <source src="{{ top_song.preview_url }}" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        {% else %}
+            <p>No preview available for this song.</p>
+        {% endif %}
     {% else %}
         <p>No data available for top song.</p>
     {% endif %}

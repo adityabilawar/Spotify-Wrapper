@@ -87,7 +87,8 @@ def get_top_song(access_token):
                 'artist': top_track['artists'][0]['name'],
                 'album': top_track['album']['name'],
                 'popularity': top_track['popularity'],
-                'image_url': top_track['album']['images'][0]['url']
+                'image_url': top_track['album']['images'][0]['url'],
+                'preview_url': top_track['preview_url']
             }
     return None
 
