@@ -1,0 +1,91 @@
+<!-- In wrap_app/templates/home.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Wrapper - Home</title>
+    <style>
+        /* Basic reset and styling */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        /* Main container */
+        .container {
+            text-align: center;
+            max-width: 600px;
+        }
+        /* Header */
+        h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #1DB954; /* Spotify green */
+            margin-bottom: 1rem;
+        }
+        /* Paragraph */
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        /* Button styling */
+        .btn {
+            background-color: #1DB954;
+            color: #fff;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #1aa34a;
+        }
+        /* Footer links */
+        .footer-links {
+            margin-top: 2rem;
+        }
+        .footer-links a {
+            color: #b3b3b3;
+            text-decoration: none;
+            margin: 0 1rem;
+            font-size: 0.9rem;
+        }
+        .footer-links a:hover {
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Spotify Wrapper</h1>
+        <p>Explore your top tracks, artists, and more, right here.</p>
+
+        {% if request.session.spotify_access_token %}
+            <a href="{% url 'spotify_profile' %}" class="btn">View Profile</a>
+            <p class="footer-links">
+                <a href="{% url 'logout' %}">Logout</a>
+            </p>
+        {% else %}
+            <a href="{% url 'spotify_login' %}" class="btn">Login with Spotify</a>
+        {% endif %}
+
+        <div class="footer-links">
+            <a href="{% url 'spotify_login' %}">Get Started</a> |
+            <a href="#">About</a> |
+            <a href="#">Help</a>
+        </div>
+    </div>
+</body>
+</html>

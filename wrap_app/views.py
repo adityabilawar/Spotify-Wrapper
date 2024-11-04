@@ -16,8 +16,8 @@ SPOTIFY_API_URL = 'https://api.spotify.com/v1/me'
 
 
 def home_view(request):
-    """Redirect to the Spotify login page."""
-    return redirect('spotify_login')  # Automatically redirect to the Spotify login page
+    """Renders the home page."""
+    return render(request, 'home.html')
 
 
 def spotify_login(request):
