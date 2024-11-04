@@ -2,6 +2,7 @@ import os
 import requests
 from django.shortcuts import render, redirect
 from dotenv import load_dotenv
+from django.core.cache import cache
 
 load_dotenv()
 
@@ -89,10 +90,23 @@ def get_top_song(access_token):
                 'image_url': top_track['album']['images'][0]['url']
             }
     return None
+
+
 def logout_view(request):
-    """Clears the session and logs the user out."""
-    request.session.flush()  # Clears the session, logging the user out
-    return redirect('home')  # Redirect to the home page
+    """Logs the user out by clearing the session and cache token."""
+    # Remove token from session if it's there
+    if 'spotify_access_token' in request.session:
+        del request.session['spotify_access_token']
+
+    # Clear cache for any token-specific key if applicable
+    cache_key = f"spotify_token_{request.user.id}"  # Adjust cache key if needed
+    cache.delete(cache_key)
+
+    # Flush the session
+    request.session.flush()
+
+    # Redirect to the home page
+    return redirect('home')
 
 def get_top_artists(access_token, limit=3):
     headers = {
