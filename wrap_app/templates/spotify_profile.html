@@ -8,13 +8,13 @@
 
     {% if top_song %}
         <h3>Most Listened-To Song:</h3>
-        <div style="display: flex; align-items: flex-start;">
-        <div style="flex: 1; margin-right: 10px;">
-            <p>Title: {{ top_song.title }}</p>
-            <p>Artist: {{ top_song.artist }}</p>
-            <p>Album: {{ top_song.album }}</p>
-            <p>Global Popularity: {{ top_song.popularity }}</p>
-        </div>
+        <div style="display: flex; align-items: flex-start; gap: 10px;">
+            <div style="flex: 1;">
+                <p>Title: {{ top_song.title }}</p>
+                <p>Artist: {{ top_song.artist }}</p>
+                <p>Album: {{ top_song.album }}</p>
+                <p>Global Popularity: {{ top_song.popularity }}</p>
+            </div>
         <div>
             <img src="{{ top_song.image_url }}" alt="Album cover" style="max-width: 165px; margin-right: 755px; border:5px solid #1DB954;">
         </div>
