@@ -102,6 +102,32 @@
             <p>{{ special_message }}</p>
         </div>
     </section>
+    <section class="slide" id="top-artist-tracks">
+        <div class="slide-content">
+            <h2>Top Tracks from {{ most_listened_artist.name }}</h2>
+            {% if top_artist_tracks %}
+                <ul>
+                    {% for track in top_artist_tracks %}
+                        <li>
+                            <p>Title: {{ track.title }}</p>
+                            <p>Album: {{ track.album }}</p>
+                            {% if track.preview_url %}
+                                <audio controls>
+                                    <source src="{{ track.preview_url }}" type="audio/mpeg">
+                                    Your browser does not support the audio element.
+                                </audio>
+                            {% endif %}
+                            {% if track.image_url %}
+                                <img src="{{ track.image_url }}" alt="Album cover for {{ track.title }}" style="max-width: 150px; border:5px solid #1DB954;">
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No data available for top tracks of {{ most_listened_artist.name }}.</p>
+            {% endif %}
+        </div>
+    </section>
 </div>
 
 <div id="nav-dots">

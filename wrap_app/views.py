@@ -115,7 +115,12 @@ def spotify_profile(request):
         listened_genre = get_most_listened_genre(access_token)
         top_album = get_top_album(access_token)
         listened_hours = get_listened_hours(access_token)
-        first_song = get_first_song_of_year(access_token)
+        # first_song = get_first_song_of_year(access_token)
+        most_listened_artist = get_most_listened_artist(access_token)
+        top_artist_tracks = None
+        if most_listened_artist:
+            top_artist_tracks = get_top_tracks_for_artist(access_token, most_listened_artist['id'])
+
         top_artist_song = get_top_artist_song(access_token, top_artists[0] if top_artists else None)
         special_message = "Thank you for being a loyal listener!"
 
@@ -126,9 +131,11 @@ def spotify_profile(request):
             'listened_genre': listened_genre,
             'top_album': top_album,
             'listened_hours': listened_hours,
-            'first_song': first_song,
+            # 'first_song': first_song,
             'top_artist_song': top_artist_song,
-            'special_message': special_message
+            'top_artist_tracks': top_artist_tracks,
+            'special_message': special_message,
+
         }
         return render(request, 'spotify_profile.html', context)
     else:
@@ -298,4 +305,37 @@ def get_top_artist_song(access_token, top_artist):
     return None
 
 
+def get_top_tracks_for_artist(access_token, artist_id):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    url = f'https://api.spotify.com/v1/artists/{artist_id}/top-tracks?market=US'
+
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        data = response.json()
+        top_tracks = []
+        for track in data['tracks'][:5]:  # Limit to top 5 tracks
+            top_tracks.append({
+                'title': track['name'],
+                'album': track['album']['name'],
+                'preview_url': track.get('preview_url'),
+                'image_url': track['album']['images'][0]['url'] if track['album']['images'] else None
+            })
+        return top_tracks
+    return None
+
+
+def get_most_listened_artist(access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    url = 'https://api.spotify.com/v1/me/top/artists?limit=1'
+
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        data = response.json()
+        if data['items']:
+            top_artist = data['items'][0]  # Most listened-to artist
+            return {
+                'id': top_artist['id'],
+                'name': top_artist['name']
+            }
+    return None
 
