@@ -40,13 +40,21 @@ def spotify_callback(request):
     }
 
     token_response = requests.post(SPOTIFY_TOKEN_URL, data=token_data)
-    token_json = token_response.json()
 
-    # Save the access token in the session
-    access_token = token_json.get('access_token')
-    request.session['spotify_access_token'] = access_token
+    if token_response.status_code == 200:
+        token_json = token_response.json()
+        access_token = token_json.get('access_token')
 
-    return redirect('spotify_profile')
+        if access_token:
+            # Store the access token in the session
+            request.session['spotify_access_token'] = access_token
+            return redirect('spotify_profile')
+        else:
+            # Handle case where access token is missing in response
+            return render(request, 'error.html', {'message': 'Access token missing in Spotify response.'})
+    else:
+        # Handle error response from Spotify
+        return render(request, 'error.html', {'message': 'Failed to retrieve access token from Spotify.'})
 
 
 def spotify_profile(request):
@@ -61,16 +69,25 @@ def spotify_profile(request):
     }
 
     profile_response = requests.get(SPOTIFY_API_URL, headers=headers)
-    profile_data = profile_response.json()
-    profile_data["product"] = profile_data["product"][0].upper() + profile_data["product"][1:]
-    top_song = get_top_song(access_token) if access_token else None
-    top_artists = get_top_artists(access_token) if access_token else None
-    context = {
-        'user_profile': profile_data,
-        'top_song': top_song,
-        'top_artists': top_artists,
-    }
-    return render(request, 'spotify_profile.html', context)
+
+    if profile_response.status_code == 200:
+        profile_data = profile_response.json()
+
+        # Format profile details and retrieve additional data
+        profile_data["product"] = profile_data["product"].capitalize() if "product" in profile_data else "Unknown"
+        top_song = get_top_song(access_token)
+        top_artists = get_top_artists(access_token)
+
+        context = {
+            'user_profile': profile_data,
+            'top_song': top_song,
+            'top_artists': top_artists,
+        }
+        return render(request, 'spotify_profile.html', context)
+    else:
+        # Handle case where profile data couldn't be retrieved
+        return render(request, 'error.html', {'message': 'Failed to retrieve Spotify profile information.'})
+
 
 def get_top_song(access_token):
     headers = {
