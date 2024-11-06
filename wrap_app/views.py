@@ -72,14 +72,20 @@ def spotify_profile(request):
 
     if profile_response.status_code == 200:
         profile_data = profile_response.json()
+        
+        # Safely get profile data with defaults for missing fields
+        safe_profile = {
+            'display_name': profile_data.get('display_name', 'Unknown User'),
+            'email': profile_data.get('email', 'No email provided'),
+            'country': profile_data.get('country', 'Unknown'),
+            'product': profile_data.get('product', 'Unknown').capitalize()
+        }
 
-        # Format profile details and retrieve additional data
-        profile_data["product"] = profile_data["product"].capitalize() if "product" in profile_data else "Unknown"
         top_song = get_top_song(access_token)
         top_artists = get_top_artists(access_token)
 
         context = {
-            'user_profile': profile_data,
+            'user_profile': safe_profile,
             'top_song': top_song,
             'top_artists': top_artists,
         }
@@ -97,16 +103,19 @@ def get_top_song(access_token):
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         data = response.json()
-        if data['items']:
-            top_track = data['items'][0]  # Get the top track (most listened to)
-            return {
-                'title': top_track['name'],
-                'artist': top_track['artists'][0]['name'],
-                'album': top_track['album']['name'],
-                'popularity': top_track['popularity'],
-                'image_url': top_track['album']['images'][0]['url'],
-                'preview_url': top_track['preview_url']
-            }
+        if data.get('items'):
+            try:
+                top_track = data['items'][0]
+                return {
+                    'title': top_track.get('name', 'Unknown Title'),
+                    'artist': top_track.get('artists', [{'name': 'Unknown Artist'}])[0]['name'],
+                    'album': top_track.get('album', {}).get('name', 'Unknown Album'),
+                    'popularity': top_track.get('popularity', 0),
+                    'image_url': top_track.get('album', {}).get('images', [{'url': None}])[0]['url'],
+                    'preview_url': top_track.get('preview_url')
+                }
+            except (KeyError, IndexError):
+                return None
     return None
 
 
@@ -136,18 +145,21 @@ def get_top_artists(access_token, limit=3):
     if response.status_code == 200:
         data = response.json()
         artists = []
-        for artist in data['items']:
-            genre = artist['genres'][0] if artist['genres'] else "Unknown Genre"
-            if genre != "Unknown Genre":
-                words = genre.split()
-                genre = ''
-                for word in words:
-                    genre += ' ' + word[0].upper() + word[1:]
-                genre = genre.strip()
-            artists.append({
-                'name': artist['name'],
-                'genre': genre,
-                'image_url': artist['images'][0]['url'] if artist['images'] else None
-            })
+        for artist in data.get('items', []):
+            try:
+                genre = artist.get('genres', ['Unknown Genre'])[0]
+                if genre != "Unknown Genre":
+                    words = genre.split()
+                    genre = ''
+                    for word in words:
+                        genre += ' ' + word[0].upper() + word[1:]
+                    genre = genre.strip()
+                artists.append({
+                    'name': artist.get('name', 'Unknown Artist'),
+                    'genre': genre,
+                    'image_url': artist.get('images', [{'url': None}])[0]['url']
+                })
+            finally:
+                return artists
         return artists
     return []

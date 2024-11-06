@@ -75,6 +75,7 @@
     </style>
 </head>
 <body class="dark-mode">
+    <div class="loading-bar" id="loadingBar"></div>
     <header>
         <h1>Welcome to Spotify Wrapped</h1>
         <button id="darkModeToggle">Switch to Light Mode</button>
@@ -118,6 +119,31 @@
 
             // Update button text
             darkModeToggle.textContent = isLightMode ? 'Switch to Dark Mode' : 'Switch to Light Mode';
+        });
+    </script>
+    <script>
+        // Loading bar functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingBar = document.getElementById('loadingBar');
+            
+            // Show loading bar when clicking links
+            document.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // Don't show loading for external links or javascript: links
+                    if (this.getAttribute('href').startsWith('#') || 
+                        this.getAttribute('href').startsWith('javascript:')) {
+                        return;
+                    }
+                    loadingBar.classList.add('active');
+                });
+            });
+
+            // Show loading bar when submitting forms
+            document.querySelectorAll('form').forEach(form => {
+                form.addEventListener('submit', function() {
+                    loadingBar.classList.add('active');
+                });
+            });
         });
     </script>
 </body>
