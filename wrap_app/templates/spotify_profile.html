@@ -104,6 +104,13 @@
     </section>
 </div>
 
+{% if gemini_recommendations %}
+    <h3>Music and Style Recommendations</h3>
+    <p>{{ gemini_recommendations }}</p>
+{% else %}
+    <p>No recommendations available at this time.</p>
+{% endif %}
+
 <div id="nav-dots">
     {% for i in "01234567"|make_list %}
         <span class="dot" onclick="scrollToSlide({{ i }})"></span>

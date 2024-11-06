@@ -3,7 +3,7 @@ import requests
 from django.shortcuts import render, redirect
 from dotenv import load_dotenv
 from django.core.cache import cache
-
+import google.generativeai as genai
 from datetime import datetime
 
 
@@ -16,7 +16,7 @@ SPOTIFY_REDIRECT_URI = os.getenv('SPOTIFY_REDIRECT_URI')
 SPOTIFY_AUTH_URL = 'https://accounts.spotify.com/authorize'
 SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token'
 SPOTIFY_API_URL = 'https://api.spotify.com/v1/me'
-
+GEMINI_KEY = os.getenv('GEMINI_KEY')
 
 def home_view(request):
     """Renders the home page."""
@@ -118,7 +118,7 @@ def spotify_profile(request):
         first_song = get_first_song_of_year(access_token)
         top_artist_song = get_top_artist_song(access_token, top_artists[0] if top_artists else None)
         special_message = "Thank you for being a loyal listener!"
-
+        gemini_recommendations = get_recommendations_from_gemini(top_song, top_artists)
         context = {
             'user_profile': profile_data,
             'top_song': top_song,
@@ -128,7 +128,8 @@ def spotify_profile(request):
             'listened_hours': listened_hours,
             'first_song': first_song,
             'top_artist_song': top_artist_song,
-            'special_message': special_message
+            'special_message': special_message,
+            'gemini_recommendations': gemini_recommendations
         }
         return render(request, 'spotify_profile.html', context)
     else:
@@ -297,5 +298,20 @@ def get_top_artist_song(access_token, top_artist):
             }
     return None
 
+def get_recommendations_from_gemini(top_song, top_artists):
+    # Authenticate and initialize the Gemini client
 
+    genai.configure(api_key=os.environ["GEMINI_KEY"])
+    model = genai.GenerativeModel(model_name="gemini-1.5-flash")
+    # Prepare input data based on the user’s top song and artists
+    input_text = f"The user’s favorite song is '{top_song['title']}' by {top_song['artist']} from the album '{top_song['album']}'. " \
+                 f"Their top artists are {[artist['name'] for artist in top_artists]}. " \
+                 "Please suggest what an average listener of this type of music would enjoy listening to next and might wear."
 
+    # Make a request to Gemini
+    try:
+        response = model.generate_content(input_text)
+        return response.text
+    except Exception as e:
+        print(f"Error querying Gemini API: {e}")
+        return "There was an issue getting recommendations."
