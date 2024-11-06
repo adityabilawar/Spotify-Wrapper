@@ -4,3 +4,4 @@
 /__pycache__
 /wrap_app/__pycache__
 /spotify_wrapper/__pycache__
+/db.sqlite3

@@ -73,12 +73,14 @@
         <p>Explore your top tracks, artists, and more, right here.</p>
 
         {% if request.session.spotify_access_token %}
+            <!-- If already logged in, show profile and logout links -->
             <a href="{% url 'spotify_profile' %}" class="btn">View Profile</a>
             <p class="footer-links">
                 <a href="{% url 'logout' %}">Logout</a>
             </p>
         {% else %}
-            <a href="{% url 'spotify_login' %}" class="btn">Login with Spotify</a>
+            <!-- If not logged in, show the login link -->
+            <a href="#" id="spotify_login_btn" class="btn">Login with Spotify</a>
         {% endif %}
 
         <div class="footer-links">
@@ -87,5 +89,80 @@
             <a href="#">Help</a>
         </div>
     </div>
+
+    <!-- Modal Popup -->
+    <div id="spotifyModal" class="modal">
+        <div class="modal-content">
+            <h3>You are already logged in to Spotify</h3>
+            <p>Would you like to log in to a new account or continue with your existing account?</p>
+            <button id="continue-btn">Continue to Profile</button>
+            <button id="new-login-btn">Log in with a New Account</button>
+            <button id="close-btn">Close</button>
+        </div>
+    </div>
+
+    <!-- Styles for Modal -->
+    <style>
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #000000;
+            margin: 5% auto;
+            padding: 20px;
+            border: 5px solid #1DB954;
+            width: 80%;
+            max-width: 400px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+        }
+    </style>
+
+    <!-- JavaScript for Modal -->
+    <script>
+        // Show modal when clicking "Login with Spotify" button
+        document.getElementById('spotify_login_btn').onclick = function(e) {
+            e.preventDefault();  // Prevent the default action (navigation)
+            document.getElementById('spotifyModal').style.display = 'block';
+        };
+
+        // Close modal when clicking "Close" button
+        document.getElementById('close-btn').onclick = function() {
+            document.getElementById('spotifyModal').style.display = 'none';
+        };
+
+        // Redirect to the user's profile page if "Continue to Profile" button is clicked
+        document.getElementById('continue-btn').onclick = function() {
+            window.location.href = '{% url "spotify_profile" %}';
+        };
+
+        // Redirect to the Spotify login page if "Log in with a New Account" button is clicked
+        document.getElementById('new-login-btn').onclick = function() {
+            window.location.href = '{% url "spotify_login" %}';
+        };
+
+        // Close modal if user clicks outside of the modal content
+        window.onclick = function(event) {
+            if (event.target === document.getElementById('spotifyModal')) {
+                document.getElementById('spotifyModal').style.display = 'none';
+            }
+        };
+    </script>
 </body>
+
 </html>
