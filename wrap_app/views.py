@@ -313,7 +313,7 @@ def get_recommendations_from_gemini(top_song, top_artists):
     # Prepare input data based on the user’s top song and artists
     input_text = f"The user’s favorite song is '{top_song['title']}' by {top_song['artist']} from the album '{top_song['album']}'. " \
                  f"Their top artists are {[artist['name'] for artist in top_artists]}. " \
-                 "Please suggest what an average listener of this type of music would enjoy listening to next and might wear."
+                 "In three sentences, please suggest what an average listener of this type of music would enjoy listening to next and might wear."
 
     # Make a request to Gemini
     try:
