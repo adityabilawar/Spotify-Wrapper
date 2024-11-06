@@ -4,6 +4,9 @@ from django.shortcuts import render, redirect
 from dotenv import load_dotenv
 from django.core.cache import cache
 
+from datetime import datetime
+
+
 load_dotenv()
 
 SPOTIFY_CLIENT_ID = os.getenv('SPOTIFY_CLIENT_ID')
@@ -57,6 +60,36 @@ def spotify_callback(request):
         return render(request, 'error.html', {'message': 'Failed to retrieve access token from Spotify.'})
 
 
+# def spotify_profile(request):
+#     """Fetches the user's Spotify profile information using the access token."""
+#     access_token = request.session.get('spotify_access_token')
+#
+#     if not access_token:
+#         return redirect('spotify_login')
+#
+#     headers = {
+#         'Authorization': f'Bearer {access_token}'
+#     }
+#
+#     profile_response = requests.get(SPOTIFY_API_URL, headers=headers)
+#
+#     if profile_response.status_code == 200:
+#         profile_data = profile_response.json()
+#
+#         # Format profile details and retrieve additional data
+#         profile_data["product"] = profile_data["product"].capitalize() if "product" in profile_data else "Unknown"
+#         top_song = get_top_song(access_token)
+#         top_artists = get_top_artists(access_token)
+#
+#         context = {
+#             'user_profile': profile_data,
+#             'top_song': top_song,
+#             'top_artists': top_artists,
+#         }
+#         return render(request, 'spotify_profile.html', context)
+#     else:
+#         # Handle case where profile data couldn't be retrieved
+#         return render(request, 'error.html', {'message': 'Failed to retrieve Spotify profile information.'})
 def spotify_profile(request):
     """Fetches the user's Spotify profile information using the access token."""
     access_token = request.session.get('spotify_access_token')
@@ -73,15 +106,29 @@ def spotify_profile(request):
     if profile_response.status_code == 200:
         profile_data = profile_response.json()
 
-        # Format profile details and retrieve additional data
-        profile_data["product"] = profile_data["product"].capitalize() if "product" in profile_data else "Unknown"
+        # Format profile details
+        profile_data["product"] = profile_data.get("product", "Unknown").capitalize()
+
+        # Fetch additional data
         top_song = get_top_song(access_token)
-        top_artists = get_top_artists(access_token)
+        top_artists = get_top_artists(access_token, limit=3)
+        listened_genre = get_most_listened_genre(access_token)
+        top_album = get_top_album(access_token)
+        listened_hours = get_listened_hours(access_token)
+        first_song = get_first_song_of_year(access_token)
+        top_artist_song = get_top_artist_song(access_token, top_artists[0] if top_artists else None)
+        special_message = "Thank you for being a loyal listener!"
 
         context = {
             'user_profile': profile_data,
             'top_song': top_song,
             'top_artists': top_artists,
+            'listened_genre': listened_genre,
+            'top_album': top_album,
+            'listened_hours': listened_hours,
+            'first_song': first_song,
+            'top_artist_song': top_artist_song,
+            'special_message': special_message
         }
         return render(request, 'spotify_profile.html', context)
     else:
@@ -132,9 +179,12 @@ def get_top_artists(access_token, limit=3):
     }
     url = f'https://api.spotify.com/v1/me/top/artists?limit={limit}'
     response = requests.get(url, headers=headers)
+    # console.log(response)
+    # print(response)
 
     if response.status_code == 200:
         data = response.json()
+        # print(data)
         artists = []
         for artist in data['items']:
             genre = artist['genres'][0] if artist['genres'] else "Unknown Genre"
@@ -151,3 +201,101 @@ def get_top_artists(access_token, limit=3):
             })
         return artists
     return []
+
+
+def get_most_listened_genre(access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    url = 'https://api.spotify.com/v1/me/top/artists?limit=10'
+
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        data = response.json()
+        genres = [genre for artist in data['items'] for genre in artist['genres']]
+        if genres:
+            most_listened_genre = max(set(genres), key=genres.count)  # Most frequent genre
+            return most_listened_genre
+    return "Unknown Genre"
+
+
+def get_top_album(access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    url = 'https://api.spotify.com/v1/me/top/tracks?limit=10'
+
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        data = response.json()
+        albums = [track['album'] for track in data['items']]
+
+        # Ensure each album has a popularity value, or assign a default value (e.g., 0)
+        for album in albums:
+            album['popularity'] = album.get('popularity', 0)  # Default to 0 if 'popularity' is missing
+
+        if albums:
+            # Sort albums by 'popularity', now with a fallback
+            top_album = max(albums, key=lambda album: album['popularity'])
+            return {
+                'name': top_album['name'],
+                'artist': top_album['artists'][0]['name'],
+                'image_url': top_album['images'][0]['url'] if top_album['images'] else None
+            }
+    return None
+
+
+def get_listened_hours(access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    url = 'https://api.spotify.com/v1/me/player/recently-played?limit=50'
+
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        data = response.json()
+        # print(data)
+        total_ms = sum(item['track']['duration_ms'] for item in data['items'])
+        total_hours = total_ms / (1000 * 60 * 60)  # Convert milliseconds to hours
+        return round(total_hours, 2)  # Rounded to 2 decimal places
+    return 0
+
+
+
+
+def get_first_song_of_year(access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    url = 'https://api.spotify.com/v1/me/player/recently-played?limit=50'
+
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        data = response.json()
+        if data['items']:
+            # Find the earliest played song
+            first_song = min(data['items'], key=lambda item: item['played_at'])
+            played_date = datetime.strptime(first_song['played_at'], "%Y-%m-%dT%H:%M:%S.%fZ")
+            return {
+                'title': first_song['track']['name'],
+                'artist': first_song['track']['artists'][0]['name'],
+                'played_at': played_date.strftime("%B %d, %Y")
+            }
+    return None
+
+
+def get_top_artist_song(access_token, top_artist):
+    if not top_artist or 'id' not in top_artist:
+        return None  # No top artist or ID provided
+
+    artist_id = top_artist['id']
+    headers = {'Authorization': f'Bearer {access_token}'}
+    url = f'https://api.spotify.com/v1/artists/{artist_id}/top-tracks?market=US'
+
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        data = response.json()
+        if data['tracks']:
+            top_track = data['tracks'][0]  # Assume the first track is the most popular
+            return {
+                'title': top_track['name'],
+                'album': top_track['album']['name'],
+                'preview_url': top_track['preview_url'],
+                'image_url': top_track['album']['images'][0]['url'] if top_track['album']['images'] else None
+            }
+    return None
+
+
+
