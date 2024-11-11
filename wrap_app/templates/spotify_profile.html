@@ -1,49 +1,168 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
+<div id="wrapper">
     <h2>Welcome, {{ user_profile.display_name }}</h2>
     <p>Email: {{ user_profile.email }}</p>
     <p>Country: {{ user_profile.country }}</p>
     <p>Product: {{ user_profile.product }}</p>
 
-    {% if top_song %}
-        <h3>Most Listened-To Song:</h3>
-        <div style="display: flex; align-items: flex-start; gap: 10px;">
-            <div style="flex: 1;">
-                <p>Title: {{ top_song.title }}</p>
-                <p>Artist: {{ top_song.artist }}</p>
-                <p>Album: {{ top_song.album }}</p>
-                <p>Global Popularity: {{ top_song.popularity }}</p>
-            </div>
-        <div>
-            <img src="{{ top_song.image_url }}" alt="Album cover" style="max-width: 165px; margin-right: 755px; border:5px solid #1DB954;">
+    <section class="slide" id="top-song">
+        <div class="slide-content">
+            <h2>Top Song</h2>
+            {% if top_song %}
+                <div style="display: flex; align-items: flex-start; gap: 10px;">
+                    <div style="flex: 1;">
+                        <p>Title: {{ top_song.title }}</p>
+                        <p>Artist: {{ top_song.artist }}</p>
+                        <p>Album: {{ top_song.album }}</p>
+                        <p>Global Popularity: {{ top_song.popularity }}</p>
+                    </div>
+                    <div>
+                        <img src="{{ top_song.image_url }}" alt="Album cover" style="max-width: 165px; border:5px solid #1DB954;">
+                    </div>
+                </div>
+                {% if top_song.preview_url %}
+                    <audio controls>
+                        <source src="{{ top_song.preview_url }}" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                {% else %}
+                    <p>No preview available for this song.</p>
+                {% endif %}
+            {% else %}
+                <p>No data available for top song.</p>
+            {% endif %}
         </div>
+    </section>
+
+    <section class="slide" id="top-artists">
+        <div class="slide-content">
+            <h2>Top 3 Artists</h2>
+            {% if top_artists %}
+                <ol style="display: flex; padding: 0;">
+                    {% for artist in top_artists %}
+                        <li style="margin: 10px; text-align: center;">
+                            <h4>{{ artist.name }}</h4>
+                            <p>Genre: {{ artist.genre }}</p>
+                            {% if artist.image_url %}
+                                <img src="{{ artist.image_url }}" alt="Image of {{ artist.name }}" width="150" style="border:5px solid #1DB954;">
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ol>
+            {% else %}
+                <p>No data available for top artists.</p>
+            {% endif %}
         </div>
-        {% if top_song.preview_url %}
-            <audio controls>
-                <source src="{{ top_song.preview_url }}" type="audio/mpeg">
-                Your browser does not support the audio element.
-            </audio>
-        {% else %}
-            <p>No preview available for this song.</p>
-        {% endif %}
-    {% else %}
-        <p>No data available for top song.</p>
-    {% endif %}
-<h3>Top 3 Artists</h3>
-    {% if top_artists %}
-        <ol style="display: flex; padding: 0;">
-            {% for artist in top_artists %}
-                <li style="margin: 10px; text-align: center;">
-                    <h4>{{ artist.name }}</h4>
-                    <p>Genre: {{ artist.genre }}</p>
-                    {% if artist.image_url %}
-                        <img src="{{ artist.image_url }}" alt="Image of {{ artist.name }}" width="150" style = "border:5px solid #1DB954;">
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ol>
-    {% else %}
-        <p>No data available for top artists.</p>
-    {% endif %}
+    </section>
+
+    <section class="slide" id="listened-genre">
+        <div class="slide-content">
+            <h2>Most Listened Genre</h2>
+            <p>{{ listened_genre }}</p>
+        </div>
+    </section>
+
+    <section class="slide" id="top-album">
+        <div class="slide-content">
+            <h2>Top Album</h2>
+            {% if top_album %}
+                <p>Album Name: {{ top_album.name }}</p>
+                <p>Artist: {{ top_album.artist }}</p>
+                <img src="{{ top_album.image_url }}" alt="Album cover for {{ top_album.name }}" style="max-width: 150px; border:5px solid #1DB954;">
+            {% else %}
+                <p>No data available for top album.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="slide" id="listened-hours">
+        <div class="slide-content">
+            <h2>Total Hours Listened</h2>
+            <p>{{ listened_hours }} hours</p>
+        </div>
+    </section>
+
+    <section class="slide" id="first-song">
+        <div class="slide-content">
+            <h2>First Song of the Year</h2>
+            {% if first_song %}
+                <p>Title: {{ first_song.title }}</p>
+                <p>Artist: {{ first_song.artist }}</p>
+                <p>Played on: {{ first_song.played_at }}</p>
+            {% else %}
+                <p>No data available for first song of the year.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="slide" id="top-artist-song">
+        <div class="slide-content">
+            <h2>Top Artist's Popular Song</h2>
+            {% if top_artist_song %}
+                <p>Title: {{ top_artist_song.title }}</p>
+                <p>Album: {{ top_artist_song.album }}</p>
+                {% if top_artist_song.preview_url %}
+                    <audio controls>
+                        <source src="{{ top_artist_song.preview_url }}" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                {% endif %}
+            {% else %}
+                <p>No data available for popular song by top artist.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="slide" id="special-message">
+        <div class="slide-content">
+            <h2>Special Message</h2>
+            <p>{{ special_message }}</p>
+        </div>
+    </section>
+
+    <section class="slide" id="top-artist-tracks">
+        <div class="slide-content">
+            <h2>Top Tracks from {{ most_listened_artist.name }}</h2>
+            {% if top_artist_tracks %}
+                <ul>
+                    {% for track in top_artist_tracks %}
+                        <li>
+                            <p>Title: {{ track.title }}</p>
+                            <p>Album: {{ track.album }}</p>
+                            {% if track.preview_url %}
+                                <audio controls>
+                                    <source src="{{ track.preview_url }}" type="audio/mpeg">
+                                    Your browser does not support the audio element.
+                                </audio>
+                            {% endif %}
+                            {% if track.image_url %}
+                                <img src="{{ track.image_url }}" alt="Album cover for {{ track.title }}" style="max-width: 150px; border:5px solid #1DB954;">
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No data available for top tracks of {{ most_listened_artist.name }}.</p>
+            {% endif %}
+        </div>
+    </section>
+</div>
+
+{% if gemini_recommendations %}
+    <h3>Music and Style Recommendations</h3>
+    <p>{{ gemini_recommendations }}</p>
+{% else %}
+    <p>No recommendations available at this time.</p>
+{% endif %}
+
+<div id="nav-dots">
+    {% for i in "01234567"|make_list %}
+        <span class="dot" onclick="scrollToSlide({{ i }})"></span>
+    {% endfor %}
+</div>
+
+<script src="{% static 'wrap_app/static/scroll.js' %}"></script>
 {% endblock %}
