@@ -9,19 +9,29 @@
     <script src="{% static 'wrap_app/static/darkmode.js' %}"></script>
     <style>
         body {
-            background-color: #121212; /* Dark mode default */
-            color: #ffffff; /* Dark mode text color */
+            background: linear-gradient(-45deg, #1DB954, #191414, #535353, #1ED760);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            color: #ffffff;
             font-family: 'Helvetica Neue', Arial, sans-serif;
             margin: 0;
             display: flex;
             flex-direction: column;
             height: 100vh;
-            transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+            transition: all 0.3s ease;
         }
 
         body.light-mode {
-            background-color: #ffffff; /* Light mode background */
-            color: #000000; /* Light mode text color */
+            background: linear-gradient(-45deg, #1ED760, #90EE90, #98FB98, #3CB371);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            color: #121212;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         header {
