@@ -9,7 +9,34 @@
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
     border: 1px solid rgba(255, 255, 255, 0.18);
     margin: 20px;
+    position: relative;
 ">
+    <div style="position: absolute; top: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px;">
+        <a href="#" style="
+            background: linear-gradient(45deg, #1DB954, #1ED760);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 2px 10px rgba(29, 185, 84, 0.3);
+            transition: all 0.3s ease;
+        " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+            Invite Friend
+        </a>
+        <a href="#" style="
+            background: linear-gradient(45deg, #1DB954, #1ED760);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 2px 10px rgba(29, 185, 84, 0.3);
+            transition: all 0.3s ease;
+        " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+            Share
+        </a>
+    </div>
     <h2 style="color: #1DB954; font-size: 2rem; margin-bottom: 1.5rem;">Welcome, {{ user_profile.display_name }}</h2>
     <div style="
         background: linear-gradient(45deg, rgba(29, 185, 84, 0.1), rgba(30, 215, 96, 0.1));

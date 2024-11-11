@@ -135,6 +135,10 @@ def logout_view(request):
     # Redirect to the home page
     return redirect('home')
 
+def contact_view(request):
+    """Renders the contact page."""
+    return render(request, 'contact.html')
+
 def get_top_artists(access_token, limit=3):
     headers = {
         'Authorization': f'Bearer {access_token}'
