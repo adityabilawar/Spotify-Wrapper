@@ -89,7 +89,7 @@
     <header>
         <h1>Welcome to Spotify Wrapped</h1>
         <button id="darkModeToggle">Switch to Light Mode</button>
-        <nav>
+        <nav style="display: flex; align-items: center; gap: 20px;">
             {% if request.session.spotify_access_token %}
                 <a href="{% url 'spotify_profile' %}">Profile</a>
                 <a href="{% url 'contact' %}">Contact</a>
@@ -98,7 +98,27 @@
                 <a href="{% url 'spotify_login' %}">Login with Spotify</a>
                 <a href="{% url 'contact' %}">Contact</a>
             {% endif %}
+            <select id="languageSelect" style="
+                background: linear-gradient(45deg, #1DB954, #1ED760);
+                color: white;
+                border: none;
+                padding: 8px;
+                border-radius: 20px;
+                cursor: pointer;
+                font-weight: bold;
+            " onchange="changeLanguage(this.value)">
+                <option value="en">English</option>
+                <option value="es">Español</option>
+                <option value="fr">Français</option>
+            </select>
         </nav>
+
+        <script>
+            function changeLanguage(lang) {
+                let path = window.location.pathname;
+                window.location.href = `/${lang}${path}`;
+            }
+        </script>
     </header>
     <main>
         {% block content %}{% endblock %}
