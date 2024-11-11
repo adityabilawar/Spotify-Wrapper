@@ -1,53 +1,10 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="profile-container" style="
-    background: rgba(0, 0, 0, 0.2);
-    padding: 2rem;
-    border-radius: 20px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    margin: 20px;
-    position: relative;
-">
-    <div style="position: absolute; top: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px;">
-        <a href="#" style="
-            background: linear-gradient(45deg, #1DB954, #1ED760);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-weight: bold;
-            box-shadow: 0 2px 10px rgba(29, 185, 84, 0.3);
-            transition: all 0.3s ease;
-        " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
-            Invite Friend
-        </a>
-        <a href="#" style="
-            background: linear-gradient(45deg, #1DB954, #1ED760);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-weight: bold;
-            box-shadow: 0 2px 10px rgba(29, 185, 84, 0.3);
-            transition: all 0.3s ease;
-        " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
-            Share
-        </a>
-    </div>
-    <h2 style="color: #1DB954; font-size: 2rem; margin-bottom: 1.5rem;">Welcome, {{ user_profile.display_name }}</h2>
-    <div style="
-        background: linear-gradient(45deg, rgba(29, 185, 84, 0.1), rgba(30, 215, 96, 0.1));
-        padding: 1rem;
-        border-radius: 15px;
-        margin-bottom: 2rem;
-    ">
-        <p>Email: {{ user_profile.email }}</p>
-        <p>Country: {{ user_profile.country }}</p>
-        <p>Product: {{ user_profile.product }}</p>
-    </div>
+    <h2>Welcome, {{ user_profile.display_name }}</h2>
+    <p>Email: {{ user_profile.email }}</p>
+    <p>Country: {{ user_profile.country }}</p>
+    <p>Product: {{ user_profile.product }}</p>
 
     {% if top_song %}
         <h3>Most Listened-To Song:</h3>
@@ -75,21 +32,9 @@
     {% endif %}
 <h3>Top 3 Artists</h3>
     {% if top_artists %}
-        <ol style="
-            display: flex; 
-            padding: 0;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-        ">
+        <ol style="display: flex; padding: 0;">
             {% for artist in top_artists %}
-                <li style="
-                    margin: 0;
-                    text-align: center;
-                    flex: 1;
-                    min-width: 250px;
-                    max-width: 100%;
-                ">
+                <li style="margin: 10px; text-align: center;">
                     <h4>{{ artist.name }}</h4>
                     <p>Genre: {{ artist.genre }}</p>
                     {% if artist.image_url %}
@@ -101,5 +46,4 @@
     {% else %}
         <p>No data available for top artists.</p>
     {% endif %}
-</div>
 {% endblock %}

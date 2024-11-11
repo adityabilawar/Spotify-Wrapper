@@ -121,3 +121,72 @@ ul li {
         transition: none !important;
     }
 }
+/* styles.css */
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+#wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    scroll-snap-type: y mandatory;
+    overflow-y: scroll;
+}
+
+.slide {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    scroll-snap-align: start;
+    padding: 20px;
+    transition: transform 0.6s ease-in-out;
+}
+
+.slide-content {
+    text-align: center;
+    max-width: 80%;
+    margin: auto;
+}
+
+#top-song { background-color: #1DB954; color: white; }
+#top-artists { background-color: #191414; color: white; }
+#listened-genre { background-color: #535353; color: white; }
+#top-album { background-color: #333; color: white; }
+#listened-hours { background-color: #282828; color: white; }
+#first-song { background-color: #121212; color: white; }
+#top-artist-song { background-color: #404040; color: white; }
+#special-message { background-color: #202020; color: white; }
+
+/* Navigation dots */
+#nav-dots {
+    position: fixed;
+    bottom: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.dot {
+    height: 10px;
+    width: 10px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.dot.active { background-color: #1DB954; }
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .slide-content {
+        padding: 15px;
+        font-size: 1em;
+    }
+}
