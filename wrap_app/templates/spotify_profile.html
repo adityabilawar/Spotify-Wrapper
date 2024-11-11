@@ -75,9 +75,21 @@
     {% endif %}
 <h3>Top 3 Artists</h3>
     {% if top_artists %}
-        <ol style="display: flex; padding: 0;">
+        <ol style="
+            display: flex; 
+            padding: 0;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        ">
             {% for artist in top_artists %}
-                <li style="margin: 10px; text-align: center;">
+                <li style="
+                    margin: 0;
+                    text-align: center;
+                    flex: 1;
+                    min-width: 250px;
+                    max-width: 100%;
+                ">
                     <h4>{{ artist.name }}</h4>
                     <p>Genre: {{ artist.genre }}</p>
                     {% if artist.image_url %}
