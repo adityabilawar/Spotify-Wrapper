@@ -23,7 +23,7 @@ def home_view(request):
 def spotify_login(request):
     """Initiates the Spotify OAuth flow by redirecting the user to the authorization page."""
     scopes = 'user-read-private user-read-email user-top-read'
-    auth_url = f"{SPOTIFY_AUTH_URL}?response_type=code&client_id={SPOTIFY_CLIENT_ID}&redirect_uri={SPOTIFY_REDIRECT_URI}&scope={scopes}"
+    auth_url = f"{SPOTIFY_AUTH_URL}?response_type=code&client_id={SPOTIFY_CLIENT_ID}&redirect_uri={SPOTIFY_REDIRECT_URI}&scope={scopes}&show_dialog=true"
     return redirect(auth_url)
 
 
@@ -51,10 +51,10 @@ def spotify_callback(request):
             return redirect('spotify_profile')
         else:
             # Handle case where access token is missing in response
-            return render(request, 'error.html', {'message': 'Access token missing in Spotify response.'})
+            return redirect('home')
     else:
         # Handle error response from Spotify
-        return render(request, 'error.html', {'message': 'Failed to retrieve access token from Spotify.'})
+        return redirect('home')
 
 
 def spotify_profile(request):
