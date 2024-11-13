@@ -8,4 +8,7 @@ urlpatterns = [
     path('spotify_profile/', views.spotify_profile, name='spotify_profile'),
     path('logout/', views.logout_view, name='logout'),
     path('contact/', views.contact_view, name='contact'),
+    path('landing/', views.landing_page, name='landing_page'),
+    path('generate_wrap/', views.generate_wrap, name='generate_wrap'),
+    path('previous_wraps/', views.previous_wraps, name='previous_wraps'),
 ]
