@@ -159,7 +159,7 @@ def get_most_listened_genre(access_token):
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         data = response.json()
-        genres = [genre for artist in data['items'] for genre in artist['genres']]
+        genres = [' '.join(word.capitalize() for word in genre.split()) for artist in data['items'] for genre in artist['genres']]
         return max(set(genres), key=genres.count) if genres else "Unknown Genre"
     return "Unknown Genre"
 
