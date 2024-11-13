@@ -213,10 +213,10 @@ def get_recommendations_from_gemini(top_song, top_artists):
     genai.configure(api_key=os.getenv("GEMINI_KEY"))
     model = genai.GenerativeModel(model_name="gemini-1.5-flash")
     input_text = (
-        f"The user’s favorite song is '{top_song['title']}' by {top_song['artist']} from the album '{top_song['album']}'. "
-        f"Their top artists are {[artist['name'] for artist in top_artists]}. "
-        "In four sentences, please suggest what an average listener of this type of music would enjoy listening to next and might wear. "
-        "What are some new artists they may enjoy?"
+        f"My favorite song is '{top_song['title']}' by {top_song['artist']} from the album '{top_song['album']}'. "
+        f"My top artists are {[artist['name'] for artist in top_artists]}. "
+        "In four sentences, please suggest what I would enjoy listening to next and might wear based on these interests. "
+        "What are some new artists I may enjoy?"
     )
 
     try:
