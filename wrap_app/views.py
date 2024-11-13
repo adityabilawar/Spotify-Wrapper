@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from django.core.cache import cache
 import google.generativeai as genai
 from datetime import datetime
-
+##from .models import Wrap uncomment this when we figure it out
 load_dotenv()
 
 SPOTIFY_CLIENT_ID = os.getenv('SPOTIFY_CLIENT_ID')
@@ -20,6 +20,10 @@ SPOTIFY_API_URL = 'https://api.spotify.com/v1/me'
 def home_view(request):
     """Renders the home page."""
     return render(request, 'home.html')
+
+def landing_page(request):
+    previous_wraps = Wrap.objects.all()  # Retrieve previous wraps
+    return render(request, 'wrap_app/landing.html', {'previous_wraps': previous_wraps})
 
 def spotify_login(request):
     """Initiates the Spotify OAuth flow by redirecting the user to the authorization page."""
