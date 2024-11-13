@@ -47,9 +47,13 @@
             color: white;
         ">
             <option value="">Select a wrap</option>
-            {% for wrap in previous_wraps %}
-                <option value="{{ wrap.id }}">{{ wrap.date_display }}</option>
-            {% endfor %}
+            {% if previous_wraps %}
+                {% for wrap in previous_wraps %}
+                    <option value="{{ wrap.id }}">{{ wrap.date_display }}</option>
+                {% endfor %}
+            {% else %}
+                <option value="No previous wrappers have been saved."></option>
+            {% endif %}
         </select>
     </div>
 </div>

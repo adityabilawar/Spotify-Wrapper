@@ -4,8 +4,8 @@ from django.shortcuts import render, redirect
 from dotenv import load_dotenv
 from django.core.cache import cache
 import google.generativeai as genai
+from .models import Wrap
 from datetime import datetime
-##from .models import Wrap uncomment this when we figure it out
 load_dotenv()
 
 SPOTIFY_CLIENT_ID = os.getenv('SPOTIFY_CLIENT_ID')
@@ -23,7 +23,10 @@ def home_view(request):
 
 def landing_page(request):
     previous_wraps = Wrap.objects.all()  # Retrieve previous wraps
-    return render(request, 'wrap_app/landing.html', {'previous_wraps': previous_wraps})
+    return render(request, 'wrap_app/landing.html', {'previous_wraps': previous_wraps if previous_wraps else None})
+
+def generate_wrap(request):
+    return redirect('landing_page')
 
 def spotify_login(request):
     """Initiates the Spotify OAuth flow by redirecting the user to the authorization page."""
