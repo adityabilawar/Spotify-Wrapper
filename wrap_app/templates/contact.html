@@ -1,9 +1,19 @@
 {% extends 'base.html' %}
+
 {% block content %}
-<h2>Contact Us</h2>
-<form method="POST">
-    {% csrf_token %}
-    <textarea name="feedback" rows="5" cols="40" placeholder="Your feedback"></textarea>
-    <button type="submit">Submit</button>
-</form>
+  <h2>Contact Us</h2>
+  <p><strong>Developers:</strong></p>
+  <ul>
+    <li><strong>Front-End:</strong> Luke Pearson, Jacob Devane, Ansh Gadodia</li>
+    <li><strong>Back-End:</strong> Vedesh Yadapalli</li>
+    <li><strong>Full-Stack:</strong> Adi Bilawar</li>
+  </ul>
+  <p><strong>Emails:</strong></p>
+  <ul>
+    <li>lukepearson649@gmail.com</li>
+    <li>jacobrdevane@gmail.com</li>
+    <li>ansh.gadodia@gmail.com</li>
+    <li>vedeshy@gmail.com</li>
+    <li>adityabilawar@gmail.com</li>
+  </ul>
 {% endblock %}
