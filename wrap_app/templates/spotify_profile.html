@@ -3,17 +3,23 @@
 
 {% block content %}
 <div id="wrapper">
-    <h2>Welcome, {{ user_profile.display_name }}</h2>
-    <p>Email: {{ user_profile.email }}</p>
-    <p>Country: {{ user_profile.country }}</p>
-    <p>Product: {{ user_profile.product }}</p>
+
+    <section class="slide" id="intro">
+        <div class="slide-content">
+            <h2>Welcome, {{ user_profile.display_name }}</h2>
+            <p>Email: {{ user_profile.email }}</p>
+            <p>Country: {{ user_profile.country }}</p>
+            <p>Product: {{ user_profile.product }}</p>
+        </div>
+    </section>
+
 
     <section class="slide" id="top-song">
         <div class="slide-content">
             <h2>Top Song</h2>
             {% if top_song %}
-                <div style="display: flex; align-items: flex-start; gap: 10px;">
-                    <div style="flex: 1;">
+                <div>
+                    <div>
                         <p>Title: {{ top_song.title }}</p>
                         <p>Artist: {{ top_song.artist }}</p>
                         <p>Album: {{ top_song.album }}</p>
@@ -41,9 +47,9 @@
         <div class="slide-content">
             <h2>Top 3 Artists</h2>
             {% if top_artists %}
-                <ol style="display: flex; padding: 0;">
+                <ol>
                     {% for artist in top_artists %}
-                        <li style="margin: 10px; text-align: center;">
+                        <li>
                             <h4>{{ artist.name }}</h4>
                             <p>Genre: {{ artist.genre }}</p>
                             {% if artist.image_url %}
@@ -149,14 +155,20 @@
             {% endif %}
         </div>
     </section>
+    <section class="slide" id="gemini">
+        <div class="slide-content">
+            {% if gemini_recommendations %}
+                <h3>Music and Style Recommendations</h3>
+                <p>{{ gemini_recommendations }}</p>
+            {% else %}
+                <p>No recommendations available at this time.</p>
+            {% endif %}
+        </div>
+    </section>
+
 </div>
 
-{% if gemini_recommendations %}
-    <h3>Music and Style Recommendations</h3>
-    <p>{{ gemini_recommendations }}</p>
-{% else %}
-    <p>No recommendations available at this time.</p>
-{% endif %}
+
 
 <div id="nav-dots">
     {% for i in "01234567"|make_list %}

@@ -99,7 +99,44 @@
         main {
             flex-grow: 1;
             padding: 20px;
+            /*overflow-y: auto;*/
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #wrapper {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            scroll-snap-type: y mandatory;
             overflow-y: auto;
+        }
+
+        .slide {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            scroll-snap-align: start;
+            padding: 20px;
+            /*background: #f0f0f0;*/
+            color: #333;
+            text-align: center;
+        }
+
+        /* Individual slide styling for better distinction */
+
+
+        /* Additional responsive tweaks */
+        @media screen and (max-width: 768px) {
+            .slide-content {
+                padding: 15px;
+                font-size: 1em;
+            }
         }
     </style>
 </head>
