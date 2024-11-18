@@ -23,7 +23,7 @@ def home_view(request):
 
 def landing_page(request):
     previous_wraps = Wrap.objects.all()  # Retrieve previous wraps
-    return render(request, 'wrap_app/landing.html', {'previous_wraps': previous_wraps if previous_wraps else None})
+    return render(request, 'landing.html', {'previous_wraps': previous_wraps if previous_wraps else None})
 
 def generate_wrap(request):
     return redirect('landing_page')
