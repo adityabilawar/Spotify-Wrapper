@@ -55,7 +55,7 @@ def spotify_callback(request):
         if access_token:
             # Store the access token in the session
             request.session['spotify_access_token'] = access_token
-            return redirect('spotify_profile')
+            return redirect('landing_page')
         else:
             return redirect('home')
     else:

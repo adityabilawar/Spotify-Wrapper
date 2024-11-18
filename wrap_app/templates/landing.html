@@ -60,7 +60,6 @@
 
 <script>
     // Event listener for generating new wrap
-    /*
     document.getElementById('generateWrap').addEventListener('click', function() {
         const timeRange = document.getElementById('timeRange').value;
         window.location.href = `{% url 'generate_wrap' %}?time_range=${timeRange}`;
@@ -70,9 +69,9 @@
     document.getElementById('previousWrapSelect').addEventListener('change', function() {
         const wrapId = this.value;
         if (wrapId) {
-            window.location.href = `{% url 'view_wrap' wrap_id=wrapId %}`;
+
         }
     });
-    */
+
 </script>
 {% endblock %}
