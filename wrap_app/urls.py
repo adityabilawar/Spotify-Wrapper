@@ -10,5 +10,5 @@ urlpatterns = [
     path('contact/', views.contact_view, name='contact'),
     path('landing/', views.landing_page, name='landing_page'),
     path('generate_wrap/', views.generate_wrap, name='generate_wrap'),
-    path('wrap/<int:wrap_id>/', views.spotify_profile, name='spotify profile'), #temp
+    path('wrap/<int:wrap_id>/', views.view_wrap, name='view_wrap'), #temp
 ]

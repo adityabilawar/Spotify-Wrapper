@@ -263,3 +263,9 @@ def get_most_listened_artist(access_token):
                 'name': top_artist['name']
             }
     return None
+
+def view_wrap(request, pk):
+    # Retrieve the specific wrap object by its primary key (pk)
+    wrap = get_object_or_404(Wrap, pk=pk)
+    # Render the template and pass the wrap object as context
+    return render(request, 'wrap_app/view_wrap.html', {'wrap': wrap})
