@@ -6,6 +6,9 @@ from django.core.cache import cache
 import google.generativeai as genai
 from .models import Wrap
 from datetime import datetime
+from django.utils.timezone import now
+from django.contrib.auth.models import User
+import json
 load_dotenv()
 
 SPOTIFY_CLIENT_ID = os.getenv('SPOTIFY_CLIENT_ID')
@@ -26,7 +29,60 @@ def landing_page(request):
     return render(request, 'landing.html', {'previous_wraps': previous_wraps if previous_wraps else None})
 
 def generate_wrap(request):
-    return redirect('landing_page')
+    """Fetches the user's Spotify profile information and stores it in the database."""
+    access_token = request.session.get('spotify_access_token')
+
+    if not access_token:
+        return redirect('spotify_login')
+
+    headers = {
+        'Authorization': f'Bearer {access_token}'
+    }
+
+    profile_response = requests.get(SPOTIFY_API_URL, headers=headers)
+
+    if profile_response.status_code == 200:
+        profile_data = profile_response.json()
+        spotify_username = profile_data.get("display_name", "Unknown")
+        product = profile_data.get("product", "Unknown").capitalize()
+
+        # Fetch additional data
+        top_song = get_top_song(access_token)
+        top_artists = get_top_artists(access_token, limit=3)
+        listened_genre = get_most_listened_genre(access_token)
+        top_album = get_top_album(access_token)
+        listened_hours = get_listened_hours(access_token)
+        most_listened_artist = get_most_listened_artist(access_token)
+        top_artist_tracks = None
+        if most_listened_artist:
+            top_artist_tracks = get_top_tracks_for_artist(access_token, most_listened_artist['id'])
+
+        top_artist_song = get_top_artist_song(access_token, top_artists[0] if top_artists else None)
+        special_message = "Thank you for being a loyal listener!"
+        gemini_recommendations = get_recommendations_from_gemini(top_song, top_artists)
+
+        # Save data to the database
+        wrap = Wrap.objects.create(
+            spotify_username=spotify_username,
+            product=product,
+            top_song=top_song,
+            top_artists=top_artists,
+            listened_genre=listened_genre,
+            top_album=top_album,
+            listened_hours=listened_hours,
+            most_listened_artist=most_listened_artist,
+            top_artist_tracks=top_artist_tracks,
+            top_artist_song=top_artist_song,
+            special_message=special_message,
+            gemini_recommendations=gemini_recommendations,
+            created_at=now()
+        )
+        wrap.save()
+
+        # Return a success response (optional)
+        return redirect('wrap_success')  # Redirect to a success page or endpoint
+    else:
+        return render(request, 'error.html', {'message': 'Failed to retrieve Spotify profile information.'})
 
 def spotify_login(request):
     """Initiates the Spotify OAuth flow by redirecting the user to the authorization page."""
