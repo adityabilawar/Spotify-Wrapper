@@ -89,9 +89,20 @@ def generate_wrap(request):
             created_at=now()
         )
         wrap.save()
-
+        context = {
+            'user_profile': profile_data,
+            'top_song': top_song,
+            'top_artists': top_artists,
+            'listened_genre': listened_genre,
+            'top_album': top_album,
+            'listened_hours': listened_hours,
+            'top_artist_song': top_artist_song,
+            'special_message': special_message,
+            'gemini_recommendations': gemini_recommendations,
+            'top_artist_tracks': top_artist_tracks,
+        }
         # Return a success response (optional)
-        return redirect('wrap_success')  # Redirect to a success page or endpoint
+        return render(request, "spotify_profile.html", context)  # Redirect to a success page or endpoint
     else:
         return render(request, 'error.html', {'message': 'Failed to retrieve Spotify profile information.'})
 
