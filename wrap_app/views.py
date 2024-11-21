@@ -9,6 +9,7 @@ from datetime import datetime
 from django.utils.timezone import now
 from django.contrib.auth.models import User
 import json
+from django.utils.translation import get_language
 load_dotenv()
 
 SPOTIFY_CLIENT_ID = os.getenv('SPOTIFY_CLIENT_ID')
@@ -24,9 +25,47 @@ def home_view(request):
     """Renders the home page."""
     return render(request, 'home.html')
 
+# def landing_page(request):
+#     previous_wraps = Wrap.objects.all()  # Retrieve previous wraps
+#     return render(request, 'landing.html', {'previous_wraps': previous_wraps if previous_wraps else None})
+
 def landing_page(request):
+    """
+    Serve the appropriate landing page based on the selected language.
+    """
+    # Get the current language
+    language = get_language()
+
+    # Map language codes to templates
+    language_to_template = {
+        'en': 'landing.html',
+        'es': 'landing_es.html',
+        'fr': 'landing_fr.html',
+    }
+
+    # Default to English if language code isn't mapped
+    template_name = language_to_template.get(language, 'landing.html')
+
+    # Retrieve previous wraps to display
+    previous_wraps = Wrap.objects.all()
+
+    # Render the appropriate template
+    return render(request, template_name, {'previous_wraps': previous_wraps if previous_wraps else None})
+
+def landing_page_es(request):
+    """
+    Spanish version of the landing page.
+    """
     previous_wraps = Wrap.objects.all()  # Retrieve previous wraps
-    return render(request, 'landing.html', {'previous_wraps': previous_wraps if previous_wraps else None})
+    return render(request, 'landing_es.html', {'previous_wraps': previous_wraps if previous_wraps else None})
+
+
+def landing_page_fr(request):
+    """
+    French version of the landing page.
+    """
+    previous_wraps = Wrap.objects.all()  # Retrieve previous wraps
+    return render(request, 'landing_fr.html', {'previous_wraps': previous_wraps if previous_wraps else None})
 
 def generate_wrap(request):
     """Fetches the user's Spotify profile information and stores it in the database."""

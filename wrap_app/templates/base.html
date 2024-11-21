@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ request.LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -61,7 +61,7 @@
                 flex-direction: column;
                 text-align: center;
             }
-            
+
             nav {
                 justify-content: center;
             }
@@ -117,24 +117,36 @@
                 <a href="{% url 'spotify_login' %}">Login with Spotify</a>
                 <a href="{% url 'contact' %}">Contact</a>
             {% endif %}
-            <select id="languageSelect" style="
-                background: linear-gradient(45deg, #1DB954, #1ED760);
-                color: white;
-                border: none;
-                padding: 8px;
-                border-radius: 20px;
-                cursor: pointer;
-                font-weight: bold;
-            " onchange="changeLanguage(this.value)">
-                <option value="en">English</option>
-                <option value="es">Español</option>
-                <option value="fr">Français</option>
-            </select>
+
+            <form id="languageForm" method="post" action="{% url 'set_language' %}" style="margin: 0; padding: 0;">
+                {% csrf_token %}
+                <select id="languageSelect" name="language" style="
+                    background: linear-gradient(45deg, #1DB954, #1ED760);
+                    color: white;
+                    border: none;
+                    padding: 8px;
+                    border-radius: 20px;
+                    cursor: pointer;
+                    font-weight: bold;
+                " onchange="document.getElementById('languageForm').submit();">
+                    <option value="en" {% if request.LANGUAGE_CODE == 'en' %}selected{% endif %}>English</option>
+                    <option value="es" {% if request.LANGUAGE_CODE == 'es' %}selected{% endif %}>Español</option>
+                    <option value="fr" {% if request.LANGUAGE_CODE == 'fr' %}selected{% endif %}>Français</option>
+                </select>
+            </form>
         </nav>
 
         <script>
             function changeLanguage(lang) {
                 let path = window.location.pathname;
+                const languageRegex = /^\/(en|es|fr)\//;
+
+                // Remove the existing language prefix if it exists
+                if (languageRegex.test(path)) {
+                    path = path.replace(languageRegex, '/');
+                }
+
+                // Add the selected language prefix
                 window.location.href = `/${lang}${path}`;
             }
         </script>
@@ -176,12 +188,12 @@
         // Loading bar functionality
         document.addEventListener('DOMContentLoaded', function() {
             const loadingBar = document.getElementById('loadingBar');
-            
+
             // Show loading bar when clicking links
             document.querySelectorAll('a').forEach(link => {
                 link.addEventListener('click', function(e) {
                     // Don't show loading for external links or javascript: links
-                    if (this.getAttribute('href').startsWith('#') || 
+                    if (this.getAttribute('href').startsWith('#') ||
                         this.getAttribute('href').startsWith('javascript:')) {
                         return;
                     }
