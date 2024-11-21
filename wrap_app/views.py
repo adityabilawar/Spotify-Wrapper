@@ -42,7 +42,7 @@ def landing_page(request):
 def generate_wrap(request):
     """Fetches the user's Spotify profile information and stores it in the database."""
     access_token = request.session.get('spotify_access_token')
-
+    time_range = request.GET.get('time_range', 'medium_term')
     if not access_token:
         return redirect('spotify_login')
 
@@ -58,12 +58,12 @@ def generate_wrap(request):
         product = profile_data.get("product", "Unknown").capitalize()
 
         # Fetch additional data
-        top_song = get_top_song(access_token)
-        top_artists = get_top_artists(access_token, limit=3)
-        listened_genre = get_most_listened_genre(access_token)
-        top_album = get_top_album(access_token)
+        top_song = get_top_song(access_token, time_range)
+        top_artists = get_top_artists(access_token, time_range, limit=3)
+        listened_genre = get_most_listened_genre(access_token, time_range)
+        top_album = get_top_album(access_token, time_range)
         listened_hours = get_listened_hours(access_token)
-        most_listened_artist = get_most_listened_artist(access_token)
+        most_listened_artist = get_most_listened_artist(access_token, time_range)
         top_artist_tracks = None
         if most_listened_artist:
             top_artist_tracks = get_top_tracks_for_artist(access_token, most_listened_artist['id'])
@@ -89,20 +89,8 @@ def generate_wrap(request):
             created_at=now()
         )
         wrap.save()
-        context = {
-            'user_profile': profile_data,
-            'top_song': top_song,
-            'top_artists': top_artists,
-            'listened_genre': listened_genre,
-            'top_album': top_album,
-            'listened_hours': listened_hours,
-            'top_artist_song': top_artist_song,
-            'special_message': special_message,
-            'gemini_recommendations': gemini_recommendations,
-            'top_artist_tracks': top_artist_tracks,
-        }
         # Return a success response (optional)
-        return render(request, "view_wrap.html", context)  # Redirect to a success page or endpoint
+        return redirect('view_wrap', wrap_id=wrap.id)
     else:
         return render(request, 'error.html', {'message': 'Failed to retrieve Spotify profile information.'})
 
@@ -187,9 +175,9 @@ def spotify_profile(request):
     else:
         return render(request, 'error.html', {'message': 'Failed to retrieve Spotify profile information.'})
 
-def get_top_song(access_token):
+def get_top_song(access_token, time_range):
     headers = {'Authorization': f'Bearer {access_token}'}
-    url = 'https://api.spotify.com/v1/me/top/tracks?limit=1'
+    url = f"https://api.spotify.com/v1/me/top/tracks?time_range={time_range}&limit=1"
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         data = response.json()
@@ -215,9 +203,9 @@ def logout_view(request):
     request.session.flush()
     return redirect('home')
 
-def get_top_artists(access_token, limit=3):
+def get_top_artists(access_token, time_range, limit=3):
     headers = {'Authorization': f'Bearer {access_token}'}
-    url = f'https://api.spotify.com/v1/me/top/artists?limit={limit}'
+    url = f'https://api.spotify.com/v1/me/top/artists?time_range={time_range}&limit={limit}'
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         data = response.json()
@@ -238,9 +226,9 @@ def contact_view(request):
     """Renders the contact page."""
     return render(request, 'contact.html')
 
-def get_most_listened_genre(access_token):
+def get_most_listened_genre(access_token, time_range):
     headers = {'Authorization': f'Bearer {access_token}'}
-    url = 'https://api.spotify.com/v1/me/top/artists?limit=10'
+    url = 'https://api.spotify.com/v1/me/top/artists?time_range={time_range}&limit=10'
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         data = response.json()
@@ -248,9 +236,9 @@ def get_most_listened_genre(access_token):
         return max(set(genres), key=genres.count) if genres else "Unknown Genre"
     return "Unknown Genre"
 
-def get_top_album(access_token):
+def get_top_album(access_token, time_range):
     headers = {'Authorization': f'Bearer {access_token}'}
-    url = 'https://api.spotify.com/v1/me/top/tracks?limit=10'
+    url = 'https://api.spotify.com/v1/me/top/tracks?time_range={time_range}&limit=10'
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         data = response.json()
@@ -328,9 +316,9 @@ def get_top_tracks_for_artist(access_token, artist_id):
         ]
     return None
 
-def get_most_listened_artist(access_token):
+def get_most_listened_artist(access_token, time_range):
     headers = {'Authorization': f'Bearer {access_token}'}
-    url = 'https://api.spotify.com/v1/me/top/artists?limit=1'
+    url = 'https://api.spotify.com/v1/me/top/artists?time_range{time_range}&limit=1'
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         data = response.json()
