@@ -25,8 +25,19 @@ def home_view(request):
     return render(request, 'home.html')
 
 def landing_page(request):
-    previous_wraps = Wrap.objects.all()  # Retrieve previous wraps
-    return render(request, 'landing.html', {'previous_wraps': previous_wraps if previous_wraps else None})
+    access_token = request.session.get('spotify_access_token')
+    headers = {
+        'Authorization': f'Bearer {access_token}'
+    }
+    profile_response = requests.get(SPOTIFY_API_URL, headers=headers)
+    if profile_response.status_code == 200:
+        all_wraps = Wrap.objects.all()  # Retrieve previous wraps
+        previous_wraps = []
+        for wrap in all_wraps:
+            if wrap.spotify_username == profile_response.json().get("display_name", "Unknown"):
+                previous_wraps.append(wrap)
+        return render(request, 'landing.html', {'previous_wraps': previous_wraps if previous_wraps else None})
+    return render(request, 'error.html')
 
 def generate_wrap(request):
     """Fetches the user's Spotify profile information and stores it in the database."""
