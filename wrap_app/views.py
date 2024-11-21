@@ -1,6 +1,6 @@
 import os
 import requests
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from dotenv import load_dotenv
 from django.core.cache import cache
 import google.generativeai as genai
@@ -102,7 +102,7 @@ def generate_wrap(request):
             'top_artist_tracks': top_artist_tracks,
         }
         # Return a success response (optional)
-        return render(request, "spotify_profile.html", context)  # Redirect to a success page or endpoint
+        return render(request, "view_wrap.html", context)  # Redirect to a success page or endpoint
     else:
         return render(request, 'error.html', {'message': 'Failed to retrieve Spotify profile information.'})
 
@@ -341,9 +341,17 @@ def get_most_listened_artist(access_token):
                 'name': top_artist['name']
             }
     return None
+def view_wrap(request, wrap_id):
+    """
+    View a specific wrap by its ID.
+    """
+    # Fetch the Wrap object by ID or return 404 if not found
+    wrap = get_object_or_404(Wrap, id=wrap_id)
 
-def view_wrap(request, pk):
-    # Retrieve the specific wrap object by its primary key (pk)
-    wrap = get_object_or_404(Wrap, pk=pk)
-    # Render the template and pass the wrap object as context
-    return render(request, 'wrap_app/view_wrap.html', {'wrap': wrap})
+    # Context to pass wrap details to the template
+    context = {
+        'wrap': wrap,
+    }
+
+    # Render the wrap details in the view_wrap.html template
+    return render(request, 'view_wrap.html', context)

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="text-align: center; padding-top: 2rem;">
+    <h2>Your Spotify Wrap</h2>
+    <h3>Created on: {{ wrap.created_at }}</h3>
+    <p><strong>Top Song:</strong> {{ wrap.top_song }}</p>
+    <p><strong>Top Artists:</strong> {{ wrap.top_artists }}</p>
+    <p><strong>Most Listened Genre:</strong> {{ wrap.listened_genre }}</p>
+    <p><strong>Total Hours Listened:</strong> {{ wrap.listened_hours }}</p>
+    <p><strong>Special Message:</strong> {{ wrap.special_message }}</p>
+
+    <h3>Top Tracks by {{ wrap.most_listened_artist }}</h3>
+    <ul>
+        {% for track in wrap.top_artist_tracks %}
+            <li>{{ track }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

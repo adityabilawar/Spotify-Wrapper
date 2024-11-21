@@ -67,9 +67,11 @@
 
     // Event listener for selecting a previous wrap
     document.getElementById('previousWrapSelect').addEventListener('change', function() {
-        const wrapId = this.value;
+        const wrapId = this.value; // Get the selected wrap ID
         if (wrapId) {
-
+            // Construct the URL dynamically using Django's URL template
+            const url = "{% url 'view_wrap' wrap_id=0 %}".replace('0', wrapId);
+            window.location.href = url; // Redirect to the view page for the selected wrap
         }
     });
 
