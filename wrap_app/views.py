@@ -343,3 +343,18 @@ def view_wrap(request, wrap_id):
 
     # Render the wrap details in the view_wrap.html template
     return render(request, 'view_wrap.html', context)
+
+def delete_all_wraps(request):
+    """Deletes all wraps for the current user."""
+    if request.method == "POST":
+        access_token = request.session.get('spotify_access_token')
+        headers = {
+            'Authorization': f'Bearer {access_token}'
+        }
+        profile_response = requests.get(SPOTIFY_API_URL, headers=headers)
+        if profile_response.status_code == 200:
+            all_wraps = Wrap.objects.all()  # Retrieve previous wraps
+            for wrap in all_wraps:
+                if wrap.spotify_username == profile_response.json().get("display_name", "Unknown"):
+                    wrap.delete()
+        return redirect('landing_page')  # Redirect back to the landing page or another suitable page

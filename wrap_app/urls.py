@@ -11,4 +11,5 @@ urlpatterns = [
     path('landing/', views.landing_page, name='landing_page'),
     path('generate_wrap/', views.generate_wrap, name='generate_wrap'),
     path('wrap/<int:wrap_id>/', views.view_wrap, name='view_wrap'), #temp
+    path('delete_all_wraps/', views.delete_all_wraps, name='delete_all_wraps')
 ]
