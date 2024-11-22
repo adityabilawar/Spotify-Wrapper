@@ -87,7 +87,11 @@
     <section class="slide" id="listened-hours">
         <div class="slide-content">
             <h2>Total Hours Listened</h2>
-            <p>{{ listened_hours }} hours</p>
+            {% if listened_hours %}
+                <p>{{ listened_hours }} hours</p>
+            {% else %}
+                <p>No data available for hours listened.</p>
+            {% endif %}
         </div>
     </section>
 
