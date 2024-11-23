@@ -51,6 +51,9 @@
                 {% for wrap in previous_wraps %}
                     <option value="{{ wrap.id }}">{{ wrap.date_display }}</option>
                 {% endfor %}
+             {% for duo in my_duos %}
+                    <option value="{{ duo.id }}">Duo with {{ duo.sender_username }}</option>
+                {% endfor %}
             {% else %}
                 <option value="No previous wrappers have been saved."></option>
             {% endif %}
