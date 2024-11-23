@@ -16,5 +16,6 @@ urlpatterns = [
     path('es/landing/', views.landing_page_es, name='landing_page_es'),  # Spanish
     path('fr/landing/', views.landing_page_fr, name='landing_page_fr'),
     path('en/landing/', views.landing_page, name='landing_page'),
-    path('set_language/', set_language, name='set_language')
+    path('set_language/', set_language, name='set_language'),
+    path('create_duo_message/', views.create_duo_message, name='create_duo_message'),
 ]

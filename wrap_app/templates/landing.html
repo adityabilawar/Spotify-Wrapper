@@ -70,7 +70,7 @@
             <option value="">Invite someone!</option>
             {% if users %}
                 {% for user in users %}
-                    <option value="{{ wrap.id }}">{{ user }}</option>
+                    <option value="{{ user }}">{{ user }}</option>
                 {% endfor %}
             {% else %}
                 <option value="No other users have wraps!"></option>
@@ -121,6 +121,18 @@
             const url = "{% url 'view_wrap' wrap_id=0 %}".replace('0', wrapId);
             window.location.href = url; // Redirect to the view page for the selected wrap
         }
+    });
+    document.getElementById('duoInvite').addEventListener('click', function () {
+        const selectedUser = document.getElementById('duoWrapSelect').value;
+
+        if (!selectedUser) {
+            alert("Please select someone to invite for a Duo Wrap!");
+            return;
+        }
+
+        // Redirect to the backend endpoint with the selected user
+        const url = `{% url 'create_duo_message' %}?receiver_username=${encodeURIComponent(selectedUser)}`;
+        window.location.href = url;
     });
 </script>
 {% endblock %}

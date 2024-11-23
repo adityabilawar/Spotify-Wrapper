@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from dotenv import load_dotenv
 from django.core.cache import cache
 import google.generativeai as genai
-from .models import Wrap
+from .models import Wrap, DuoMessage
 from datetime import datetime
 from django.utils.timezone import now
 from django.contrib.auth.models import User
@@ -394,3 +394,26 @@ def delete_all_wraps(request):
                 if wrap.spotify_username == profile_response.json().get("display_name", "Unknown"):
                     wrap.delete()
         return redirect('landing_page')  # Redirect back to the landing page or another suitable page
+
+def create_duo_message(request):
+    """Creates a DuoMessage for the current user and the selected user."""
+    access_token = request.session.get('spotify_access_token')
+    headers = {
+        'Authorization': f'Bearer {access_token}'
+    }
+    profile_response = requests.get(SPOTIFY_API_URL, headers=headers)
+    current_user = profile_response.json().get("display_name", "Unknown")
+    receiver_username = request.GET.get('receiver_username')
+    if not current_user or not receiver_username:
+        return JsonResponse({"error": "Both sender and receiver usernames are required."}, status=400)
+
+    try:
+        # Save the DuoMessage to the database
+        duo_message = DuoMessage.objects.create(
+            sender_username=current_user,
+            receiver_username=receiver_username,
+            wrap_data={}  # Placeholder for wrap data
+        )
+        return redirect('landing_page')  # Redirect to a success page or landing
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
