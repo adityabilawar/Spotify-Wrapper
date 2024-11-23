@@ -1,6 +1,6 @@
 import os
 import requests
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from dotenv import load_dotenv
 from django.core.cache import cache
 import google.generativeai as genai
@@ -24,10 +24,6 @@ SPOTIFY_API_URL = 'https://api.spotify.com/v1/me'
 def home_view(request):
     """Renders the home page."""
     return render(request, 'home.html')
-
-# def landing_page(request):
-#     previous_wraps = Wrap.objects.all()  # Retrieve previous wraps
-#     return render(request, 'landing.html', {'previous_wraps': previous_wraps if previous_wraps else None})
 
 def landing_page(request):
     """
@@ -70,7 +66,7 @@ def landing_page_fr(request):
 def generate_wrap(request):
     """Fetches the user's Spotify profile information and stores it in the database."""
     access_token = request.session.get('spotify_access_token')
-
+    time_range = request.GET.get('time_range', 'medium_term')
     if not access_token:
         return redirect('spotify_login')
 
@@ -86,12 +82,12 @@ def generate_wrap(request):
         product = profile_data.get("product", "Unknown").capitalize()
 
         # Fetch additional data
-        top_song = get_top_song(access_token)
-        top_artists = get_top_artists(access_token, limit=3)
-        listened_genre = get_most_listened_genre(access_token)
-        top_album = get_top_album(access_token)
+        top_song = get_top_song(access_token, time_range)
+        top_artists = get_top_artists(access_token, time_range, limit=3)
+        listened_genre = get_most_listened_genre(access_token, time_range)
+        top_album = get_top_album(access_token, time_range)
         listened_hours = get_listened_hours(access_token)
-        most_listened_artist = get_most_listened_artist(access_token)
+        most_listened_artist = get_most_listened_artist(access_token, time_range)
         top_artist_tracks = None
         if most_listened_artist:
             top_artist_tracks = get_top_tracks_for_artist(access_token, most_listened_artist['id'])
@@ -119,7 +115,7 @@ def generate_wrap(request):
         wrap.save()
 
         # Return a success response (optional)
-        return redirect('wrap_success')  # Redirect to a success page or endpoint
+        return redirect('view_wrap', wrap_id=wrap.id)
     else:
         return render(request, 'error.html', {'message': 'Failed to retrieve Spotify profile information.'})
 
@@ -204,9 +200,9 @@ def spotify_profile(request):
     else:
         return render(request, 'error.html', {'message': 'Failed to retrieve Spotify profile information.'})
 
-def get_top_song(access_token):
+def get_top_song(access_token, time_range):
     headers = {'Authorization': f'Bearer {access_token}'}
-    url = 'https://api.spotify.com/v1/me/top/tracks?limit=1'
+    url = f"https://api.spotify.com/v1/me/top/tracks?time_range={time_range}&limit=1"
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         data = response.json()
@@ -232,9 +228,9 @@ def logout_view(request):
     request.session.flush()
     return redirect('home')
 
-def get_top_artists(access_token, limit=3):
+def get_top_artists(access_token, time_range, limit=3):
     headers = {'Authorization': f'Bearer {access_token}'}
-    url = f'https://api.spotify.com/v1/me/top/artists?limit={limit}'
+    url = f'https://api.spotify.com/v1/me/top/artists?time_range={time_range}&limit={limit}'
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         data = response.json()
@@ -255,9 +251,9 @@ def contact_view(request):
     """Renders the contact page."""
     return render(request, 'contact.html')
 
-def get_most_listened_genre(access_token):
+def get_most_listened_genre(access_token, time_range):
     headers = {'Authorization': f'Bearer {access_token}'}
-    url = 'https://api.spotify.com/v1/me/top/artists?limit=10'
+    url = 'https://api.spotify.com/v1/me/top/artists?time_range={time_range}&limit=10'
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         data = response.json()
@@ -265,9 +261,9 @@ def get_most_listened_genre(access_token):
         return max(set(genres), key=genres.count) if genres else "Unknown Genre"
     return "Unknown Genre"
 
-def get_top_album(access_token):
+def get_top_album(access_token, time_range):
     headers = {'Authorization': f'Bearer {access_token}'}
-    url = 'https://api.spotify.com/v1/me/top/tracks?limit=10'
+    url = 'https://api.spotify.com/v1/me/top/tracks?time_range={time_range}&limit=10'
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         data = response.json()
@@ -345,9 +341,9 @@ def get_top_tracks_for_artist(access_token, artist_id):
         ]
     return None
 
-def get_most_listened_artist(access_token):
+def get_most_listened_artist(access_token, time_range):
     headers = {'Authorization': f'Bearer {access_token}'}
-    url = 'https://api.spotify.com/v1/me/top/artists?limit=1'
+    url = 'https://api.spotify.com/v1/me/top/artists?time_range{time_range}&limit=1'
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         data = response.json()
@@ -358,9 +354,32 @@ def get_most_listened_artist(access_token):
                 'name': top_artist['name']
             }
     return None
+def view_wrap(request, wrap_id):
+    """
+    View a specific wrap by its ID.
+    """
+    # Fetch the Wrap object by ID or return 404 if not found
+    wrap = get_object_or_404(Wrap, id=wrap_id)
 
-def view_wrap(request, pk):
-    # Retrieve the specific wrap object by its primary key (pk)
-    wrap = get_object_or_404(Wrap, pk=pk)
-    # Render the template and pass the wrap object as context
-    return render(request, 'wrap_app/view_wrap.html', {'wrap': wrap})
+    # Context to pass wrap details to the template
+    context = {
+        'wrap': wrap,
+    }
+
+    # Render the wrap details in the view_wrap.html template
+    return render(request, 'view_wrap.html', context)
+
+def delete_all_wraps(request):
+    """Deletes all wraps for the current user."""
+    if request.method == "POST":
+        access_token = request.session.get('spotify_access_token')
+        headers = {
+            'Authorization': f'Bearer {access_token}'
+        }
+        profile_response = requests.get(SPOTIFY_API_URL, headers=headers)
+        if profile_response.status_code == 200:
+            all_wraps = Wrap.objects.all()  # Retrieve previous wraps
+            for wrap in all_wraps:
+                if wrap.spotify_username == profile_response.json().get("display_name", "Unknown"):
+                    wrap.delete()
+        return redirect('landing_page')  # Redirect back to the landing page or another suitable page
