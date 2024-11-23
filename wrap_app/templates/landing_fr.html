@@ -56,6 +56,21 @@
             {% endif %}
         </select>
     </div>
+    <div style="margin-top: 3rem;">
+        <form method="POST" action="{% url 'delete_all_wraps' %}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer tous les enregistrements?');">
+            {% csrf_token %}
+            <button type="submit" style="
+                padding: 10px 20px;
+                background-color: red;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                margin-top: 20px;
+                font-weight: bold;
+            ">Supprimer Tous Les Wraps</button>
+        </form>
+    </div>
 </div>
 
 <script>
@@ -67,9 +82,10 @@
 
     // Event listener for selecting a previous wrap
     document.getElementById('previousWrapSelect').addEventListener('change', function() {
-        const wrapId = this.value;
         if (wrapId) {
-
+            // Construct the URL dynamically using Django's URL template
+            const url = "{% url 'view_wrap' wrap_id=0 %}".replace('0', wrapId);
+            window.location.href = url; // Redirect to the view page for the selected wrap
         }
     });
 
