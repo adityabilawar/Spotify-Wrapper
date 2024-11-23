@@ -41,12 +41,23 @@ def landing_page(request):
 
     # Default to English if language code isn't mapped
     template_name = language_to_template.get(language, 'landing.html')
-
-    # Retrieve previous wraps to display
-    previous_wraps = Wrap.objects.all()
-
-    # Render the appropriate template
-    return render(request, template_name, {'previous_wraps': previous_wraps if previous_wraps else None})
+    access_token = request.session.get('spotify_access_token')
+    headers = {
+        'Authorization': f'Bearer {access_token}'
+    }
+    profile_response = requests.get(SPOTIFY_API_URL, headers=headers)
+    if profile_response.status_code == 200:
+        all_wraps = Wrap.objects.all()  # Retrieve previous wraps
+        previous_wraps = []
+        users = []
+        for wrap in all_wraps:
+            if wrap.spotify_username == profile_response.json().get("display_name", "Unknown"):
+                previous_wraps.append(wrap)
+            else:
+                if wrap.spotify_username not in users:
+                    users.append(wrap.spotify_username)
+        return render(request, template_name, {'previous_wraps': previous_wraps if previous_wraps else None, 'users': users})
+    return render(request, 'error.html')
 
 def landing_page_es(request):
     """

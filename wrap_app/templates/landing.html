@@ -56,6 +56,37 @@
             {% endif %}
         </select>
     </div>
+    <div style="margin-top: 3rem;">
+        <h3>Mix it up with someone</h3>
+        <label for="previousWrapSelect" style="font-weight: bold; color: #1DB954;">Select someone to DUO Wrap with:</label>
+        <select id="duoWrapSelect" style="
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #1DB954;
+            font-weight: bold;
+            background-color: #191414;
+            color: white;
+        ">
+            <option value="">Invite someone!</option>
+            {% if users %}
+                {% for user in users %}
+                    <option value="{{ wrap.id }}">{{ user }}</option>
+                {% endfor %}
+            {% else %}
+                <option value="No other users have wraps!"></option>
+            {% endif %}
+        </select>
+        <button id="duoInvite" style="
+            padding: 10px 20px;
+            background-color: #1DB954;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: background-color 0.3s;
+        ">Invite!</button>
+    </div>
 
     <!-- Button to delete all wraps -->
     <div style="margin-top: 3rem;">
@@ -70,7 +101,7 @@
                 cursor: pointer;
                 margin-top: 20px;
                 font-weight: bold;
-            ">Delete All Wraps</button>
+            ">Delete All My Wraps</button>
         </form>
     </div>
 </div>

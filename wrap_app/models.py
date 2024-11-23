@@ -24,3 +24,12 @@ class Wrap(models.Model):
     def date_display(self):
         """Returns a readable date display for use in templates."""
         return self.created_at.strftime('%B %d, %Y')
+
+class DuoMessage(models.Model):
+    sender_username = models.CharField(max_length=255, help_text="The Spotify username of the sender.")
+    receiver_username = models.CharField(max_length=255, help_text="The Spotify username of the receiver.")
+    wrap_data = models.JSONField(help_text="The combined wrap data for the duo wrap.")
+    created_at = models.DateTimeField(default=now, help_text="Timestamp when the duo message was created.")
+
+    def __str__(self):
+        return f"Duo Wrap from {self.sender_username} to {self.receiver_username} - {self.created_at.strftime('%Y-%m-%d %H:%M:%S')}"
