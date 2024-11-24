@@ -31,7 +31,7 @@
             cursor: pointer;
             margin-left: 10px;
             transition: background-color 0.3s;
-        ">Generate Wrap</button>
+        ">Generate Wrap!</button>
     </div>
 
     <!-- Dropdown for Previous Wraps -->
@@ -51,9 +51,6 @@
                 {% for wrap in previous_wraps %}
                     <option value="{{ wrap.id }}">{{ wrap.date_display }}</option>
                 {% endfor %}
-             {% for duo in my_duos %}
-                    <option value="{{ duo.id }}">Duo with {{ duo.sender_username }}</option>
-                {% endfor %}
             {% else %}
                 <option value="No previous wrappers have been saved."></option>
             {% endif %}
@@ -61,8 +58,8 @@
     </div>
     <div style="margin-top: 3rem;">
         <h3>Mix it up with someone</h3>
-        <label for="previousWrapSelect" style="font-weight: bold; color: #1DB954;">Select someone to DUO Wrap with:</label>
-        <select id="duoWrapSelect" style="
+        <label for="duoWrapInvite" style="font-weight: bold; color: #1DB954;">Select someone to DUO Wrap with:</label>
+        <select id="duoWrapInvite" style="
             padding: 10px;
             border-radius: 5px;
             border: 1px solid #1DB954;
@@ -89,6 +86,36 @@
             margin-left: 10px;
             transition: background-color 0.3s;
         ">Invite!</button>
+    </div>
+    <div style="margin-top: 3rem;">
+        <label for="duoListInvites" style="font-weight: bold; color: #1DB954;">Select an invite:</label>
+        <select id="duoListInvites" style="
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #1DB954;
+            font-weight: bold;
+            background-color: #191414;
+            color: white;
+        ">
+            <option value="">Accept an Invitation!</option>
+            {% if my_duos %}
+                {% for duo in my_duos %}
+                    <option value="{{ duo.sender_username }}">Duo with {{ duo.sender_username }}</option>
+                {% endfor %}
+            {% else %}
+                <option value="No other users have invited you!"></option>
+            {% endif %}
+        </select>
+        <button id="duoAccept" style="
+            padding: 10px 20px;
+            background-color: #1DB954;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: background-color 0.3s;
+        ">Generate!</button>
     </div>
 
     <!-- Button to delete all wraps -->
@@ -126,7 +153,7 @@
         }
     });
     document.getElementById('duoInvite').addEventListener('click', function () {
-        const selectedUser = document.getElementById('duoWrapSelect').value;
+        const selectedUser = document.getElementById('duoWrapInvite').value;
 
         if (!selectedUser) {
             alert("Please select someone to invite for a Duo Wrap!");
@@ -136,6 +163,10 @@
         // Redirect to the backend endpoint with the selected user
         const url = `{% url 'create_duo_message' %}?receiver_username=${encodeURIComponent(selectedUser)}`;
         window.location.href = url;
+    });
+    document.getElementById('duoAccept').addEventListener('click', function() {
+        const duoUser = document.getElementById('duoListInvites').value;
+        window.location.href = `{% url 'generate_duo_wrap' %}?duoUser=${duoUser}`;
     });
 </script>
 {% endblock %}

@@ -422,3 +422,6 @@ def create_duo_message(request):
         return redirect('landing_page')  # Redirect to a success page or landing
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+
+def generate_duo_wrap(request):
+    return 0

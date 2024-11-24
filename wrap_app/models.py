@@ -25,6 +25,18 @@ class Wrap(models.Model):
         """Returns a readable date display for use in templates."""
         return self.created_at.strftime('%B %d, %Y')
 
+class DuoWrap(models.Model):
+    wrap1 = models.ForeignKey(Wrap, on_delete=models.CASCADE, related_name='duowraps_as_first')
+    wrap2 = models.ForeignKey(Wrap, on_delete=models.CASCADE, related_name='duowraps_as_second')
+    created_at = models.DateTimeField(default=now)
+
+    def __str__(self):
+        return f"DuoWrap of {self.wrap1.spotify_username} and {self.wrap2.spotify_username}"
+
+    def date_display(self):
+        """Returns a readable date display for use in templates."""
+        return self.created_at.strftime('%B %d, %Y')
+
 class DuoMessage(models.Model):
     sender_username = models.CharField(max_length=255, help_text="The Spotify username of the sender.")
     receiver_username = models.CharField(max_length=255, help_text="The Spotify username of the receiver.")
