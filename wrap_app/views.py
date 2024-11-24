@@ -50,6 +50,7 @@ def landing_page(request):
         all_wraps = Wrap.objects.all()  # Retrieve previous wraps
         previous_wraps = []
         users = []
+        my_duo_invites = []
         my_duos = []
         for wrap in all_wraps:
             if wrap.spotify_username == profile_response.json().get("display_name", "Unknown"):
@@ -57,11 +58,16 @@ def landing_page(request):
             else:
                 if wrap.spotify_username not in users:
                     users.append(wrap.spotify_username)
-        all_duos = DuoMessage.objects.all()
-        for duo in all_duos:
+        all_duo_invites = DuoMessage.objects.all()
+        for duo in all_duo_invites:
             if duo.receiver_username == profile_response.json().get("display_name", "Unknown"):
+                my_duo_invites.append(duo)
+        all_duos = DuoWrap.objects.all()
+        for duo in all_duos:
+            if duo.wrap1.spotify_username == profile_response.json().get("display_name", "Unknown") or duo.wrap2.spotify_username == profile_response.json().get("display_name", "Unknown"):
                 my_duos.append(duo)
-        return render(request, template_name, {'previous_wraps': previous_wraps if previous_wraps else None, 'users': users, 'my_duos': my_duos})
+        print(my_duos)
+        return render(request, template_name, {'previous_wraps': previous_wraps if previous_wraps else None, 'users': users, 'my_duo_invites': my_duo_invites, 'my_duos': my_duos})
     return render(request, 'error.html')
 
 def landing_page_es(request):

@@ -49,10 +49,15 @@
             <option value="">Select a wrap</option>
             {% if previous_wraps %}
                 {% for wrap in previous_wraps %}
-                    <option value="{{ wrap.id }}">{{ wrap.date_display }}</option>
+                    <option value="{{ wrap.id }}" data-type="regular">{{ wrap.date_display }}</option>
                 {% endfor %}
+            {% if my_duos %}
+                {% for duo in my_duos %}
+                    <option value="{{ duo.id }}" data-type="duo">{{ duo }}</option>
+                {% endfor %}
+            {% endif %}
             {% else %}
-                <option value="No previous wrappers have been saved."></option>
+                <option value="No previous wraps have been saved."></option>
             {% endif %}
         </select>
     </div>
@@ -98,8 +103,8 @@
             color: white;
         ">
             <option value="">Accept an Invitation!</option>
-            {% if my_duos %}
-                {% for duo in my_duos %}
+            {% if my_duo_invites %}
+                {% for duo in my_duo_invites %}
                     <option value="{{ duo.sender_username }}">Duo with {{ duo.sender_username }}</option>
                 {% endfor %}
             {% else %}
@@ -147,8 +152,16 @@
     document.getElementById('previousWrapSelect').addEventListener('change', function() {
         const wrapId = this.value; // Get the selected wrap ID
         if (wrapId) {
-            // Construct the URL dynamically using Django's URL template
-            const url = "{% url 'view_wrap' wrap_id=0 %}".replace('0', wrapId);
+            const selectedOption = this.options[this.selectedIndex];
+            const wrapType = selectedOption.getAttribute('data-type');
+            let url = '';
+            if (wrapType === 'regular') {
+            // Construct the URL for regular wraps
+                url = "{% url 'view_wrap' wrap_id=0 %}".replace('0', wrapId);
+            } else if (wrapType === 'duo') {
+                // Construct the URL for duo wraps
+                url = "{% url 'view_duo_wrap' duowrap_id=0 %}".replace('0', wrapId);
+            }
             window.location.href = url; // Redirect to the view page for the selected wrap
         }
     });
