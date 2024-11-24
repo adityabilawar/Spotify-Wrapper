@@ -1,19 +1,162 @@
 {% extends 'base.html' %}
-{% block content %}
-<div style="text-align: center; padding-top: 2rem;">
-    <h2>Your Spotify Wrap</h2>
-    <h3>Created on: {{ wrap.created_at }}</h3>
-    <p><strong>Top Song:</strong> {{ wrap.top_song }}</p>
-    <p><strong>Top Artists:</strong> {{ wrap.top_artists }}</p>
-    <p><strong>Most Listened Genre:</strong> {{ wrap.listened_genre }}</p>
-    <p><strong>Total Hours Listened:</strong> {{ wrap.listened_hours }}</p>
-    <p><strong>Special Message:</strong> {{ wrap.special_message }}</p>
+{% load static %}
 
-    <h3>Top Tracks by {{ wrap.most_listened_artist }}</h3>
-    <ul>
-        {% for track in wrap.top_artist_tracks %}
-            <li>{{ track }}</li>
-        {% endfor %}
-    </ul>
+{% block content %}
+<div id="wrapper">
+    <h2>Welcome, {{ wrap.spotify_username }}</h2>
+    <p>Product: {{ wrap.product }}</p>
+
+    <!-- Top Song Section -->
+    <section class="slide" id="top-song">
+        <div class="slide-content">
+            <h2>Top Song</h2>
+            {% if wrap.top_song %}
+                <p>Title: {{ wrap.top_song }}</p>
+            {% else %}
+                <p>No data available for top song.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Top Artists Section -->
+    <section class="slide" id="top-artists">
+        <div class="slide-content">
+            <h2>Top 3 Artists</h2>
+            {% if wrap.top_artists %}
+                <ol style="display: flex; padding: 0;">
+                    {% for artist in wrap.top_artists %}
+                        <li style="margin: 10px; text-align: center;">
+                            <h4>{{ artist.name }}</h4>
+                            {% if artist.genre %}
+                                <p>Genre: {{ artist.genre }}</p>
+                            {% endif %}
+                            {% if artist.image_url %}
+                                <img src="{{ artist.image_url }}" alt="Image of {{ artist.name }}" width="150" style="border:5px solid #1DB954;">
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ol>
+            {% else %}
+                <p>No data available for top artists.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Most Listened Genre Section -->
+    <section class="slide" id="listened-genre">
+        <div class="slide-content">
+            <h2>Most Listened Genre</h2>
+            {% if wrap.listened_genre %}
+                <p>{{ wrap.listened_genre }}</p>
+            {% else %}
+                <p>No data available for most listened genre.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Top Album Section -->
+    <section class="slide" id="top-album">
+        <div class="slide-content">
+            <h2>Top Album</h2>
+            {% if wrap.top_album %}
+                <p>Album Name: {{ wrap.top_album }}</p>
+            {% else %}
+                <p>No data available for top album.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Total Hours Listened Section -->
+    <section class="slide" id="listened-hours">
+        <div class="slide-content">
+            <h2>Total Hours Listened</h2>
+            {% if wrap.listened_hours %}
+                <p>{{ wrap.listened_hours }} hours</p>
+            {% else %}
+                <p>No data available for total hours listened.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Top Artist's Popular Song Section -->
+    <section class="slide" id="top-artist-song">
+        <div class="slide-content">
+            <h2>Top Artist's Popular Song</h2>
+            {% if wrap.top_artist_song %}
+                <p>Title: {{ wrap.top_artist_song }}</p>
+            {% else %}
+                <p>No data available for popular song by top artist.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Special Message Section -->
+    <section class="slide" id="special-message">
+        <div class="slide-content">
+            <h2>Special Message</h2>
+            {% if wrap.special_message %}
+                <p>{{ wrap.special_message }}</p>
+            {% else %}
+                <p>No special message available.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Top Tracks from Most Listened Artist Section -->
+    <section class="slide" id="top-artist-tracks">
+        <div class="slide-content">
+            {% if wrap.most_listened_artist %}
+                <h2>Top Tracks from {{ wrap.most_listened_artist.name }}</h2>
+                {% if wrap.top_artist_tracks %}
+                    <ul>
+                        {% for track in wrap.top_artist_tracks %}
+                            <li>
+                                <p>Title: {{ track.title }}</p>
+                                <p>Album: {{ track.album }}</p>
+                                {% if track.preview_url %}
+                                    <audio controls>
+                                        <source src="{{ track.preview_url }}" type="audio/mpeg">
+                                        Your browser does not support the audio element.
+                                    </audio>
+                                {% endif %}
+                                {% if track.image_url %}
+                                    <img src="{{ track.image_url }}" alt="Album cover for {{ track.title }}" style="max-width: 150px; border:5px solid #1DB954;">
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No data available for top tracks of {{ wrap.most_listened_artist.name }}.</p>
+                {% endif %}
+            {% else %}
+                <p>No data available for most listened artist.</p>
+            {% endif %}
+        </div>
+    </section>
 </div>
+
+<!-- Gemini Recommendations Section -->
+{% if wrap.gemini_recommendations %}
+    <h3>Music and Style Recommendations</h3>
+    {% if wrap.gemini_recommendations|length > 0 %}
+        <ul>
+            {% for recommendation in wrap.gemini_recommendations %}
+                <li>{{ recommendation }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>{{ wrap.gemini_recommendations }}</p>
+    {% endif %}
+{% else %}
+    <p>No recommendations available at this time.</p>
+{% endif %}
+
+<!-- Navigation Dots -->
+<div id="nav-dots">
+    {% for i in "0123456"|make_list %}
+        <span class="dot" onclick="scrollToSlide({{ i }})"></span>
+    {% endfor %}
+</div>
+
+<script src="{% static 'wrap_app/static/scroll.js' %}"></script>
 {% endblock %}
