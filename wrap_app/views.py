@@ -442,7 +442,7 @@ def generate_duo_wrap(request):
             wrap2 = wrap
     duoWrap = DuoWrap.objects.create(wrap1 = wrap1, wrap2 = wrap2)
 
-    return redirect('view_duo_wrap', duowrap_id = duoWrap)
+    return redirect('view_duo_wrap', duowrap_id = duoWrap.id)
 
 def view_duo_wrap(request, duowrap_id):
     """
@@ -458,4 +458,4 @@ def view_duo_wrap(request, duowrap_id):
     }
 
     # Render the wrap details in the view_wrap.html template
-    return render(request, 'view_duo_wrap.html', context)
+    return render(request, 'duo-wrapped.html', context)

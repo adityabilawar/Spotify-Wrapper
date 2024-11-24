@@ -1,12 +1,256 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block content %}
-<h2>Your Duo-Wrapped</h2>
-<ul>
-    {% for user_track, friend_track in duo_tracks %}
-    <li>
-        <strong>Your Track:</strong> {{ user_track.name }} by {{ user_track.artists.0.name }}<br>
-        <strong>Friend's Track:</strong> {{ friend_track.name }} by {{ friend_track.artists.0.name }}
-    </li>
-    {% endfor %}
-</ul>
+<div id="wrapper">
+    <h2>Comparing Wraps of {{ wrap1.spotify_username }} and {{ wrap2.spotify_username }}</h2>
+
+    <!-- Top Song Comparison -->
+    <section class="slide" id="top-song">
+        <div class="slide-content">
+            <h2>Top Song Comparison</h2>
+            <div style="display: flex; gap: 50px;">
+                <!-- Wrap1 Top Song -->
+                <div style="flex: 1; text-align: center;">
+                    <h3>{{ wrap1.spotify_username }}</h3>
+                    {% if wrap1.top_song %}
+                        <p>Title: {{ wrap1.top_song.title }}</p>
+                        <p>Artist: {{ wrap1.top_song.artist }}</p>
+                        <p>Album: {{ wrap1.top_song.album }}</p>
+                        {% if wrap1.top_song.image_url %}
+                            <img src="{{ wrap1.top_song.image_url }}" alt="Album cover" style="max-width: 150px; border:5px solid #1DB954;">
+                        {% endif %}
+                    {% else %}
+                        <p>No data available.</p>
+                    {% endif %}
+                </div>
+                <!-- Wrap2 Top Song -->
+                <div style="flex: 1; text-align: center;">
+                    <h3>{{ wrap2.spotify_username }}</h3>
+                    {% if wrap2.top_song %}
+                        <p>Title: {{ wrap2.top_song.title }}</p>
+                        <p>Artist: {{ wrap2.top_song.artist }}</p>
+                        <p>Album: {{ wrap2.top_song.album }}</p>
+                        {% if wrap2.top_song.image_url %}
+                            <img src="{{ wrap2.top_song.image_url }}" alt="Album cover" style="max-width: 150px; border:5px solid #1DB954;">
+                        {% endif %}
+                    {% else %}
+                        <p>No data available.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Top Artists Comparison -->
+    <section class="slide" id="top-artists">
+        <div class="slide-content">
+            <h2>Top 3 Artists Comparison</h2>
+            <div style="display: flex; gap: 50px;">
+                <!-- Wrap1 Top Artists -->
+                <div style="flex: 1; text-align: center;">
+                    <h3>{{ wrap1.spotify_username }}</h3>
+                    {% if wrap1.top_artists %}
+                        <ol style="padding: 0;">
+                            {% for artist in wrap1.top_artists %}
+                                <li style="margin: 10px;">
+                                    <h4>{{ artist.name }}</h4>
+                                    <p>Genre: {{ artist.genre }}</p>
+                                    {% if artist.image_url %}
+                                        <img src="{{ artist.image_url }}" alt="{{ artist.name }}" width="100" style="border:5px solid #1DB954;">
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ol>
+                    {% else %}
+                        <p>No data available.</p>
+                    {% endif %}
+                </div>
+                <!-- Wrap2 Top Artists -->
+                <div style="flex: 1; text-align: center;">
+                    <h3>{{ wrap2.spotify_username }}</h3>
+                    {% if wrap2.top_artists %}
+                        <ol style="padding: 0;">
+                            {% for artist in wrap2.top_artists %}
+                                <li style="margin: 10px;">
+                                    <h4>{{ artist.name }}</h4>
+                                    <p>Genre: {{ artist.genre }}</p>
+                                    {% if artist.image_url %}
+                                        <img src="{{ artist.image_url }}" alt="{{ artist.name }}" width="100" style="border:5px solid #1DB954;">
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ol>
+                    {% else %}
+                        <p>No data available.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Most Listened Genre Comparison -->
+    <section class="slide" id="listened-genre">
+        <div class="slide-content">
+            <h2>Most Listened Genre Comparison</h2>
+            <div style="display: flex; gap: 50px;">
+                <!-- Wrap1 Genre -->
+                <div style="flex: 1; text-align: center;">
+                    <h3>{{ wrap1.spotify_username }}</h3>
+                    <p>{{ wrap1.listened_genre }}</p>
+                </div>
+                <!-- Wrap2 Genre -->
+                <div style="flex: 1; text-align: center;">
+                    <h3>{{ wrap2.spotify_username }}</h3>
+                    <p>{{ wrap2.listened_genre }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Top Album Comparison -->
+    <section class="slide" id="top-album">
+        <div class="slide-content">
+            <h2>Top Album Comparison</h2>
+            <div style="display: flex; gap: 50px;">
+                <!-- Wrap1 Top Album -->
+                <div style="flex: 1; text-align: center;">
+                    <h3>{{ wrap1.spotify_username }}</h3>
+                    {% if wrap1.top_album %}
+                        <p>Album Name: {{ wrap1.top_album.name }}</p>
+                        <p>Artist: {{ wrap1.top_album.artist }}</p>
+                        {% if wrap1.top_album.image_url %}
+                            <img src="{{ wrap1.top_album.image_url }}" alt="Album cover" style="max-width: 150px; border:5px solid #1DB954;">
+                        {% endif %}
+                    {% else %}
+                        <p>No data available.</p>
+                    {% endif %}
+                </div>
+                <!-- Wrap2 Top Album -->
+                <div style="flex: 1; text-align: center;">
+                    <h3>{{ wrap2.spotify_username }}</h3>
+                    {% if wrap2.top_album %}
+                        <p>Album Name: {{ wrap2.top_album.name }}</p>
+                        <p>Artist: {{ wrap2.top_album.artist }}</p>
+                        {% if wrap2.top_album.image_url %}
+                            <img src="{{ wrap2.top_album.image_url }}" alt="Album cover" style="max-width: 150px; border:5px solid #1DB954;">
+                        {% endif %}
+                    {% else %}
+                        <p>No data available.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Listened Hours Comparison -->
+    <section class="slide" id="listened-hours">
+        <div class="slide-content">
+            <h2>Total Hours Listened Comparison</h2>
+            <div style="display: flex; gap: 50px;">
+                <!-- Wrap1 Hours -->
+                <div style="flex: 1; text-align: center;">
+                    <h3>{{ wrap1.spotify_username }}</h3>
+                    <p>{{ wrap1.listened_hours }} hours</p>
+                </div>
+                <!-- Wrap2 Hours -->
+                <div style="flex: 1; text-align: center;">
+                    <h3>{{ wrap2.spotify_username }}</h3>
+                    <p>{{ wrap2.listened_hours }} hours</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Top Artist's Popular Song Comparison -->
+    <section class="slide" id="top-artist-song">
+        <div class="slide-content">
+            <h2>Top Artist's Popular Song Comparison</h2>
+            <div style="display: flex; gap: 50px;">
+                <!-- Wrap1 Top Artist Song -->
+                <div style="flex: 1; text-align: center;">
+                    <h3>{{ wrap1.spotify_username }}</h3>
+                    {% if wrap1.top_artist_song %}
+                        <p>Title: {{ wrap1.top_artist_song.title }}</p>
+                        <p>Album: {{ wrap1.top_artist_song.album }}</p>
+                        {% if wrap1.top_artist_song.preview_url %}
+                            <audio controls>
+                                <source src="{{ wrap1.top_artist_song.preview_url }}" type="audio/mpeg">
+                                Your browser does not support the audio element.
+                            </audio>
+                        {% endif %}
+                    {% else %}
+                        <p>No data available.</p>
+                    {% endif %}
+                </div>
+                <!-- Wrap2 Top Artist Song -->
+                <div style="flex: 1; text-align: center;">
+                    <h3>{{ wrap2.spotify_username }}</h3>
+                    {% if wrap2.top_artist_song %}
+                        <p>Title: {{ wrap2.top_artist_song.title }}</p>
+                        <p>Album: {{ wrap2.top_artist_song.album }}</p>
+                        {% if wrap2.top_artist_song.preview_url %}
+                            <audio controls>
+                                <source src="{{ wrap2.top_artist_song.preview_url }}" type="audio/mpeg">
+                                Your browser does not support the audio element.
+                            </audio>
+                        {% endif %}
+                    {% else %}
+                        <p>No data available.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Special Message Comparison -->
+    <section class="slide" id="special-message">
+        <div class="slide-content">
+            <h2>Special Messages</h2>
+            <div style="display: flex; gap: 50px;">
+                <!-- Wrap1 Special Message -->
+                <div style="flex: 1; text-align: center;">
+                    <h3>{{ wrap1.spotify_username }}</h3>
+                    <p>{{ wrap1.special_message }}</p>
+                </div>
+                <!-- Wrap2 Special Message -->
+                <div style="flex: 1; text-align: center;">
+                    <h3>{{ wrap2.spotify_username }}</h3>
+                    <p>{{ wrap2.special_message }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gemini Recommendations Comparison -->
+    {% if wrap1.gemini_recommendations or wrap2.gemini_recommendations %}
+    <section class="slide" id="gemini-recommendations">
+        <div class="slide-content">
+            <h2>Music and Style Recommendations</h2>
+            <div style="display: flex; gap: 50px;">
+                <!-- Wrap1 Recommendations -->
+                <div style="flex: 1; text-align: center;">
+                    <h3>{{ wrap1.spotify_username }}</h3>
+                    {% if wrap1.gemini_recommendations %}
+                        <p>{{ wrap1.gemini_recommendations }}</p>
+                    {% else %}
+                        <p>No recommendations available.</p>
+                    {% endif %}
+                </div>
+                <!-- Wrap2 Recommendations -->
+                <div style="flex: 1; text-align: center;">
+                    <h3>{{ wrap2.spotify_username }}</h3>
+                    {% if wrap2.gemini_recommendations %}
+                        <p>{{ wrap2.gemini_recommendations }}</p>
+                    {% else %}
+                        <p>No recommendations available.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+</div>
+
+<script src="{% static 'wrap_app/static/scroll.js' %}"></script>
 {% endblock %}
