@@ -398,6 +398,12 @@ def delete_all_wraps(request):
             for wrap in all_wraps:
                 if wrap.spotify_username == profile_response.json().get("display_name", "Unknown"):
                     wrap.delete()
+            all_duos = Duos.objects.all()
+            for duo in all_duos:
+                if duo.wrap1.spotify_username == profile_response.json().get("display_name", "Unknown"):
+                    duo.delete()
+                if duo.wrap2.spotify_username == profile_response.json().get("display_name", "Unknown"):
+                    duo.delete()
         return redirect('landing_page')  # Redirect back to the landing page or another suitable page
 
 def create_duo_message(request):
