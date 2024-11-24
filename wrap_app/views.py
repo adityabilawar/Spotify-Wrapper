@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from dotenv import load_dotenv
 from django.core.cache import cache
 import google.generativeai as genai
-from .models import Wrap, DuoMessage
+from .models import Wrap, DuoMessage, DuoWrap
 from datetime import datetime
 from django.utils.timezone import now
 from django.contrib.auth.models import User
@@ -424,4 +424,38 @@ def create_duo_message(request):
         return JsonResponse({"error": str(e)}, status=500)
 
 def generate_duo_wrap(request):
-    return 0
+    access_token = request.session.get('spotify_access_token')
+    headers = {
+        'Authorization': f'Bearer {access_token}'
+    }
+    profile_response = requests.get(SPOTIFY_API_URL, headers=headers)
+    current_user = profile_response.json().get("display_name", "Unknown")
+    all_wraps = Wrap.objects.all()
+    duoUser = request.GET.get('duoUser')
+    wrap1 = None
+    wrap2 = None
+    for wrap in all_wraps:
+        if wrap.spotify_username == duoUser:
+            wrap1 = wrap
+    for wrap in all_wraps:
+        if wrap.spotify_username == current_user:
+            wrap2 = wrap
+    duoWrap = DuoWrap.objects.create(wrap1 = wrap1, wrap2 = wrap2)
+
+    return redirect('view_duo_wrap', duowrap_id = duoWrap)
+
+def view_duo_wrap(request, duowrap_id):
+    """
+    View a specific wrap by its ID.
+    """
+    # Fetch the Wrap object by ID or return 404 if not found
+    wrap = get_object_or_404(DuoWrap, id=duowrap_id)
+
+    # Context to pass wrap details to the template
+    context = {
+        'wrap1': wrap.wrap1,
+        'wrap2': wrap.wrap2,
+    }
+
+    # Render the wrap details in the view_wrap.html template
+    return render(request, 'view_duo_wrap.html', context)
