@@ -27,6 +27,26 @@
             animation: gradient 15s ease infinite;
             color: #121212;
         }
+        
+        body.light-mode label,
+        body.light-mode h1,
+        body.light-mode h2,
+        body.light-mode h3,
+        body.light-mode p,
+        body.light-mode select,
+        body.light-mode button {
+            color: #000000;
+        }
+
+        body.light-mode select {
+            background-color: #ffffff;
+            border-color: #1DB954;
+        }
+
+        body.light-mode #darkModeToggle {
+            background-color: #1DB954;
+            color: #ffffff;
+        }
 
         @keyframes gradient {
             0% { background-position: 0% 50%; }
