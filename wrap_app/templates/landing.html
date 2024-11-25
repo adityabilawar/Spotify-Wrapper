@@ -49,7 +49,7 @@
             <option value="">Select a wrap</option>
             {% if previous_wraps %}
                 {% for wrap in previous_wraps %}
-                    <option value="{{ wrap.id }}" data-type="regular">{{ wrap.date_display }}</option>
+                    <option value="{{ wrap.id }}" data-type="regular">{{ wrap.date_display }} - {{ wrap.time_range }}</option>
                 {% endfor %}
             {% if my_duos %}
                 {% for duo in my_duos %}
