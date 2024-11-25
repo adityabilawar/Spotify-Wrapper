@@ -117,9 +117,16 @@ def generate_wrap(request):
         top_artist_song = get_top_artist_song(access_token, top_artists[0] if top_artists else None)
         special_message = "Thank you for being a loyal listener!"
         gemini_recommendations = get_recommendations_from_gemini(top_song, top_artists)
-
+        time_string = ""
+        if (time_range == "medium_term"):
+            time_string = "Last 6 months"
+        elif(time_range == "long_term"):
+            time_string = "All Time"
+        elif(time_range == "short_term"):
+            time_string = "Last 4 weeks"
         # Save data to the database
         wrap = Wrap.objects.create(
+            time_range=time_string,
             spotify_username=spotify_username,
             product=product,
             top_song=top_song,
