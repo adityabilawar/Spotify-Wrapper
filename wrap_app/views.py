@@ -404,7 +404,7 @@ def delete_all_wraps(request):
             for wrap in all_wraps:
                 if wrap.spotify_username == profile_response.json().get("display_name", "Unknown"):
                     wrap.delete()
-            all_duos = Duos.objects.all()
+            all_duos = DuoWrap.objects.all()
             for duo in all_duos:
                 if duo.wrap1.spotify_username == profile_response.json().get("display_name", "Unknown"):
                     duo.delete()
