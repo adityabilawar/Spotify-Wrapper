@@ -153,7 +153,7 @@
         <p>Explore your top tracks, artists, and more, right here.</p>
 
         {% if request.session.spotify_access_token %}
-            <a href="{% url 'spotify_profile' %}" class="btn">View Profile</a>
+            <a href="{% url 'landing' %}" class="btn">View Profile</a>
             <p class="footer-links">
                 <a href="{% url 'logout' %}">Logout</a>
             </p>

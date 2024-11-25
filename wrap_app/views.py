@@ -218,7 +218,7 @@ def spotify_profile(request):
             'gemini_recommendations': gemini_recommendations,
             'top_artist_tracks': top_artist_tracks,
         }
-        return render(request, 'spotify_profile.html', context)
+        return render(request, 'view_wrap.html', context)
     else:
         return render(request, 'error.html', {'message': 'Failed to retrieve Spotify profile information.'})
 
