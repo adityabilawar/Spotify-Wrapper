@@ -4,12 +4,12 @@
 {% block content %}
 <div style="text-align: center; padding-top: 2rem;">
     <h2>Spotify Wrapped - Tu Viaje Musical</h2>
-    <p>¡Elige tu historial de escucha y explora tus mejores canciones, artistas y más!</p>
+    <p>¡Elige tu historial de reproducciones y explora tus canciones, artistas y más populares!</p>
 
     <!-- Generate New Wrap Button and Time Range Selection -->
     <div style="margin-top: 2rem;">
-        <h3>Crear un Nuevo Wrap</h3>
-        <label for="timeRange" style="font-weight: bold; color: #1DB954;">Selecciona el Rango de Tiempo:</label>
+        <h3>Crear un Nuevo Wrapped</h3>
+        <label for="timeRange" style="font-weight: bold; color: #1DB954;">Seleccionar Período:</label>
         <select id="timeRange" style="
             padding: 10px;
             border-radius: 5px;
@@ -31,13 +31,13 @@
             cursor: pointer;
             margin-left: 10px;
             transition: background-color 0.3s;
-        ">Generar Wrap</button>
+        ">¡Generar Wrapped!</button>
     </div>
 
     <!-- Dropdown for Previous Wraps -->
     <div style="margin-top: 3rem;">
-        <h3>Ver un Wrap Anterior</h3>
-        <label for="previousWrapSelect" style="font-weight: bold; color: #1DB954;">Selecciona un Wrap Anterior:</label>
+        <h3>Ver un Wrapped Anterior</h3>
+        <label for="previousWrapSelect" style="font-weight: bold; color: #1DB954;">Seleccionar un Wrapped Anterior:</label>
         <select id="previousWrapSelect" style="
             padding: 10px;
             border-radius: 5px;
@@ -46,18 +46,86 @@
             background-color: #191414;
             color: white;
         ">
-            <option value="">Selecciona un wrap</option>
+            <option value="">Seleccionar un wrapped</option>
             {% if previous_wraps %}
                 {% for wrap in previous_wraps %}
-                    <option value="{{ wrap.id }}">{{ wrap.date_display }}</option>
+                    <option value="{{ wrap.id }}" data-type="regular">{{ wrap.date_display }}</option>
                 {% endfor %}
+            {% if my_duos %}
+                {% for duo in my_duos %}
+                    <option value="{{ duo.id }}" data-type="duo">{{ duo }}</option>
+                {% endfor %}
+            {% endif %}
             {% else %}
                 <option value="No se han guardado wraps anteriores."></option>
             {% endif %}
         </select>
     </div>
     <div style="margin-top: 3rem;">
-        <form method="POST" action="{% url 'delete_all_wraps' %}" onsubmit="return confirm('¿Estás seguro de que quieres eliminar todos los registros?');">
+        <h3>Comparte con alguien</h3>
+        <label for="duoWrapInvite" style="font-weight: bold; color: #1DB954;">Selecciona a alguien para hacer un DUO Wrap:</label>
+        <select id="duoWrapInvite" style="
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #1DB954;
+            font-weight: bold;
+            background-color: #191414;
+            color: white;
+        ">
+            <option value="">¡Invita a alguien!</option>
+            {% if users %}
+                {% for user in users %}
+                    <option value="{{ user }}">{{ user }}</option>
+                {% endfor %}
+            {% else %}
+                <option value="¡No hay otros usuarios con wraps!"></option>
+            {% endif %}
+        </select>
+        <button id="duoInvite" style="
+            padding: 10px 20px;
+            background-color: #1DB954;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: background-color 0.3s;
+        ">¡Invitar!</button>
+    </div>
+    <div style="margin-top: 3rem;">
+        <label for="duoListInvites" style="font-weight: bold; color: #1DB954;">Seleccionar una invitación:</label>
+        <select id="duoListInvites" style="
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #1DB954;
+            font-weight: bold;
+            background-color: #191414;
+            color: white;
+        ">
+            <option value="">¡Acepta una Invitación!</option>
+            {% if my_duo_invites %}
+                {% for duo in my_duo_invites %}
+                    <option value="{{ duo.sender_username }}">Dúo con {{ duo.sender_username }}</option>
+                {% endfor %}
+            {% else %}
+                <option value="¡Ningún usuario te ha invitado!"></option>
+            {% endif %}
+        </select>
+        <button id="duoAccept" style="
+            padding: 10px 20px;
+            background-color: #1DB954;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: background-color 0.3s;
+        ">¡Generar!</button>
+    </div>
+
+    <!-- Button to delete all wraps -->
+    <div style="margin-top: 3rem;">
+        <form method="POST" action="{% url 'delete_all_wraps' %}" onsubmit="return confirm('¿Estás seguro de que quieres eliminar todos los wraps?');">
             {% csrf_token %}
             <button type="submit" style="
                 padding: 10px 20px;
@@ -68,7 +136,7 @@
                 cursor: pointer;
                 margin-top: 20px;
                 font-weight: bold;
-            ">Eliminar Todos Los Wraps</button>
+            ">Eliminar Todos Mis Wraps</button>
         </form>
     </div>
 </div>
@@ -82,13 +150,33 @@
 
     // Event listener for selecting a previous wrap
     document.getElementById('previousWrapSelect').addEventListener('change', function() {
-        const wrapId = this.value;
+        const wrapId = this.value; // Get the selected wrap ID
         if (wrapId) {
-            // Construct the URL dynamically using Django's URL template
-            const url = "{% url 'view_wrap' wrap_id=0 %}".replace('0', wrapId);
-            window.location.href = url; // Redirect to the view page for the selected wrap
+            const selectedOption = this.options[this.selectedIndex];
+            const wrapType = selectedOption.getAttribute('data-type');
+            let url = '';
+            if (wrapType === 'regular') {
+                url = "{% url 'view_wrap' wrap_id=0 %}".replace('0', wrapId);
+            } else if (wrapType === 'duo') {
+                url = "{% url 'view_duo_wrap' duowrap_id=0 %}".replace('0', wrapId);
+            }
+            window.location.href = url;
         }
     });
+    document.getElementById('duoInvite').addEventListener('click', function () {
+        const selectedUser = document.getElementById('duoWrapInvite').value;
 
+        if (!selectedUser) {
+            alert("¡Por favor selecciona a alguien para invitar al Duo Wrap!");
+            return;
+        }
+
+        const url = `{% url 'create_duo_message' %}?receiver_username=${encodeURIComponent(selectedUser)}`;
+        window.location.href = url;
+    });
+    document.getElementById('duoAccept').addEventListener('click', function() {
+        const duoUser = document.getElementById('duoListInvites').value;
+        window.location.href = `{% url 'generate_duo_wrap' %}?duoUser=${duoUser}`;
+    });
 </script>
 {% endblock %}
