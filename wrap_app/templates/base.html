@@ -139,6 +139,136 @@
                 font-size: 1em;
             }
         }
+                /* Ensure the slides are displayed as full-page sections */
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #wrapper {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            scroll-snap-type: y mandatory;
+            overflow-y: auto;
+            width: 100%;
+            padding: 0;
+        }
+
+        /* Ensure the slide is set to full viewport height and proper spacing */
+        .slide {
+            height: 100vh; /* Ensure full height */
+            display: flex;
+            flex-direction: column; /* Stack content vertically */
+            justify-content: flex-start; /* Align content to the top */
+            align-items: center;
+            scroll-snap-align: start;
+            padding: 20px;
+            background: #f0f0f0;
+            color: #333;
+            text-align: center;
+            box-sizing: border-box; /* Prevent overflow */
+            overflow: hidden; /* Prevent content overflow */
+            margin-bottom: 20px; /* Ensure space between slides */
+            position: relative; /* Prevent stacking issues */
+        }
+
+        /* Individual slide styling for better distinction */
+        #top-song {
+            background-color: #1DB954;
+            color: white;
+        }
+
+        #top-artists {
+            background-color: #191414;
+            color: white;
+        }
+
+        #listened-genre {
+            background-color: #535353;
+            color: white;
+        }
+
+        #top-album {
+            background-color: #333;
+            color: white;
+        }
+
+        #listened-hours {
+            background-color: #282828;
+            color: white;
+        }
+
+        /* Flexbox tweaks for better content alignment */
+        .slide-content {
+            width: 100%;
+            max-width: 100%; /* Ensure content doesn't overflow */
+            overflow: hidden; /* Prevent content overflow */
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Responsive Design Adjustments */
+        @media screen and (max-width: 768px) {
+            .slide-content {
+                padding: 15px;
+                font-size: 1em;
+            }
+
+            .slide {
+                padding: 10px; /* Reduced padding on smaller screens */
+            }
+
+            .slide img {
+                max-width: 100%; /* Ensure images are responsive */
+                height: auto; /* Maintain aspect ratio */
+            }
+
+            /* Adjust text size for smaller screens */
+            .slide-content h2, .slide-content h3, .slide-content p {
+                font-size: 1.2em;
+            }
+        }
+
+        /* Prevent overflow of long words or large elements */
+        .slide-content p {
+            word-wrap: break-word; /* Prevent overflow from long words */
+        }
+
+        img {
+            max-width: 100%; /* Ensure images don't overflow */
+            height: auto; /* Maintain aspect ratio */
+        }
+
+        /* Optional: Style the nav dots for improved UX */
+        #nav-dots {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            background-color: #ccc;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .dot:hover {
+            background-color: #1DB954;
+        }
+
+        /* Add space to prevent items from stacking */
+        #top-artist-tracks, #top-artist-song, #gemini {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body class="dark-mode">
