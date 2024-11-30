@@ -94,7 +94,7 @@
         #darkModeToggle {
             background-color: #1DB954;
             border: none;
-            color: white;
+            /*color: white;*/
             padding: 8px 12px;
             border-radius: 20px;
             cursor: pointer;
@@ -182,6 +182,37 @@
                 grid-template-columns: repeat(2, 1fr); /* Two columns for smaller screens */
             }
         }
+
+        body.light-mode label,
+        body.light-mode h1,
+        body.light-mode h2,
+        body.light-mode h3,
+        body.light-mode p,
+        body.light-mode select,
+        body.light-mode button,
+        body.light-mode a,
+        body.light-mode form {
+            color: #000000;
+        }
+        body.light-mode select {
+            background-color: #ffffff;
+            border-color: #1DB954;
+        }
+        body.dark-mode #darkModeToggle {
+            color: #ffffff;
+        }
+        body.light-mode #darkModeToggle {
+            background-color: #1DB954;
+            color: #000000;
+        }
+        body.dark-mode #languageSelect {
+            color: #ffffff;
+        }
+        body.light-mode #languageSelect {
+            color: #000000;
+        }
+
+
     </style>
 </head>
 <body class="dark-mode">
@@ -203,7 +234,7 @@
                 {% csrf_token %}
                 <select id="languageSelect" name="language" style="
                     background: linear-gradient(45deg, #1DB954, #1ED760);
-                    color: white;
+                    /*color: white;*/
                     border: none;
                     padding: 8px;
                     border-radius: 20px;
