@@ -118,6 +118,23 @@ def generate_wrap(request):
         special_message = "Thank you for being a loyal listener!"
         gemini_recommendations = get_recommendations_from_gemini(top_song, top_artists)
 
+        try:
+            json.dumps(top_song)  # Will raise an error if not valid JSON
+        except (TypeError, ValueError) as e:
+            top_song = None  # Handle invalid data gracefully
+
+        try:
+            json.dumps(top_album)  # Will raise an error if not valid JSON
+        except (TypeError, ValueError) as e:
+            top_album = None  # Handle invalid data gracefully
+
+        if time_range == 'medium_term':
+            time_range = 'Last 6 Months'
+        elif time_range == 'short_term':
+            time_range = 'Last 4 Weeks'
+        else:
+            time_range = 'All Time'
+
         # Save data to the database
         wrap = Wrap.objects.create(
             spotify_username=spotify_username,
@@ -132,7 +149,8 @@ def generate_wrap(request):
             top_artist_song=top_artist_song,
             special_message=special_message,
             gemini_recommendations=gemini_recommendations,
-            created_at=now()
+            created_at=now(),
+            time_range=time_range
         )
         wrap.save()
 
@@ -230,6 +248,7 @@ def get_top_song(access_token, time_range):
         data = response.json()
         if data['items']:
             top_track = data['items'][0]
+            # print(top_track)
             return {
                 'title': top_track['name'],
                 'artist': top_track['artists'][0]['name'],
@@ -275,7 +294,7 @@ def contact_view(request):
 
 def get_most_listened_genre(access_token, time_range):
     headers = {'Authorization': f'Bearer {access_token}'}
-    url = 'https://api.spotify.com/v1/me/top/artists?time_range={time_range}&limit=10'
+    url = f'https://api.spotify.com/v1/me/top/artists?time_range={time_range}&limit=10'
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         data = response.json()
@@ -285,7 +304,7 @@ def get_most_listened_genre(access_token, time_range):
 
 def get_top_album(access_token, time_range):
     headers = {'Authorization': f'Bearer {access_token}'}
-    url = 'https://api.spotify.com/v1/me/top/tracks?time_range={time_range}&limit=10'
+    url = f'https://api.spotify.com/v1/me/top/tracks?time_range={time_range}&limit=10'
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         data = response.json()

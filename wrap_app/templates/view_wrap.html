@@ -3,17 +3,36 @@
 
 {% block content %}
 <div id="wrapper">
-    <h2>Welcome, {{ wrap.spotify_username }}</h2>
-    <p>Product: {{ wrap.product }}</p>
+
+    <section class="slide" id="welcome-section">
+        <div class="slide-content">
+        <h2>Welcome, {{ wrap.spotify_username }}</h2>
+        <p>Spotify Product: {{ wrap.product }}</p>
+        <p>Creation Date: {{ wrap.created_at }}</p>
+        <p>Wrap Time Range: {{wrap.time_range}}</p>
+        </div>
+    </section>
 
     <!-- Top Song Section -->
     <section class="slide" id="top-song">
         <div class="slide-content">
-            <h2>Top Song</h2>
+            <h2>Your Top Song</h2>
             {% if wrap.top_song %}
-                <p>Title: {{ wrap.top_song }}</p>
+                <strong>**Playing Song (Feature Deprecated)**</strong>
+                <p>Title: {{ wrap.top_song.title }}</p>
+                <p>Artist: {{ wrap.top_song.artist }}</p>
+                <p>Album: {{ wrap.top_song.album }}</p>
+                {% if wrap.top_song.preview_url %}
+                    <audio controls>
+                        <source src="{{ wrap.top_song.preview_url }}" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                {% endif %}
             {% else %}
                 <p>No data available for top song.</p>
+            {% endif %}
+            {% if wrap.top_song.image_url %}
+                <img src="{{ wrap.top_song.image_url }}" alt="Image of {{ wrap.top_song.artist }}" width="150" style="border:5px solid #1DB954;">
             {% endif %}
         </div>
     </section>
@@ -59,36 +78,40 @@
         <div class="slide-content">
             <h2>Top Album</h2>
             {% if wrap.top_album %}
-                <p>Album Name: {{ wrap.top_album }}</p>
+                <p>Album Name: {{ wrap.top_album.name }}</p>
+                <p>Artist: {{ wrap.top_album.artist }}</p>
             {% else %}
                 <p>No data available for top album.</p>
             {% endif %}
-        </div>
-    </section>
-
-    <!-- Total Hours Listened Section -->
-    <section class="slide" id="listened-hours">
-        <div class="slide-content">
-            <h2>Total Hours Listened</h2>
-            {% if wrap.listened_hours %}
-                <p>{{ wrap.listened_hours }} hours</p>
-            {% else %}
-                <p>No data available for total hours listened.</p>
+            {% if wrap.top_album.image_url %}
+                <img src="{{ wrap.top_album.image_url }}" alt="Image of {{ wrap.top_album.artist }}" width="150" style="border:5px solid #1DB954;">
             {% endif %}
         </div>
     </section>
 
-    <!-- Top Artist's Popular Song Section -->
-    <section class="slide" id="top-artist-song">
-        <div class="slide-content">
-            <h2>Top Artist's Popular Song</h2>
-            {% if wrap.top_artist_song %}
-                <p>Title: {{ wrap.top_artist_song }}</p>
-            {% else %}
-                <p>No data available for popular song by top artist.</p>
-            {% endif %}
-        </div>
-    </section>
+<!--    &lt;!&ndash; Total Hours Listened Section &ndash;&gt;-->
+<!--    <section class="slide" id="listened-hours">-->
+<!--        <div class="slide-content">-->
+<!--            <h2>Total Hours Listened</h2>-->
+<!--            {% if wrap.listened_hours %}-->
+<!--                <p>{{ wrap.listened_hours }} hours</p>-->
+<!--            {% else %}-->
+<!--                <p>No data available for total hours listened.</p>-->
+<!--            {% endif %}-->
+<!--        </div>-->
+<!--    </section>-->
+
+<!--    &lt;!&ndash; Top Artist's Popular Song Section &ndash;&gt;-->
+<!--    <section class="slide" id="top-artist-song">-->
+<!--        <div class="slide-content">-->
+<!--            <h2>Top Artist's Popular Song</h2>-->
+<!--            {% if wrap.top_artist_song %}-->
+<!--                <p>Title: {{ wrap.top_artist_song }}</p>-->
+<!--            {% else %}-->
+<!--                <p>No data available for popular song by top artist.</p>-->
+<!--            {% endif %}-->
+<!--        </div>-->
+<!--    </section>-->
 
     <!-- Special Message Section -->
     <section class="slide" id="special-message">
@@ -108,9 +131,12 @@
             {% if wrap.most_listened_artist %}
                 <h2>Top Tracks from {{ wrap.most_listened_artist.name }}</h2>
                 {% if wrap.top_artist_tracks %}
-                    <ul>
+                    <ul class="tracks-grid">
                         {% for track in wrap.top_artist_tracks %}
                             <li>
+                                {% if track.image_url %}
+                                    <img src="{{ track.image_url }}" alt="Album cover for {{ track.title }}" style="max-width: 150px; border:5px solid #1DB954;">
+                                {% endif %}
                                 <p>Title: {{ track.title }}</p>
                                 <p>Album: {{ track.album }}</p>
                                 {% if track.preview_url %}
@@ -119,9 +145,7 @@
                                         Your browser does not support the audio element.
                                     </audio>
                                 {% endif %}
-                                {% if track.image_url %}
-                                    <img src="{{ track.image_url }}" alt="Album cover for {{ track.title }}" style="max-width: 150px; border:5px solid #1DB954;">
-                                {% endif %}
+
                             </li>
                         {% endfor %}
                     </ul>
@@ -133,26 +157,37 @@
             {% endif %}
         </div>
     </section>
+    <section class="slide" id="gemini">
+        <div class="slide-content">
+            {% if wrap.gemini_recommendations %}
+                <h3>Music and Style Recommendations</h3>
+                <p>{{ wrap.gemini_recommendations }}</p>
+            {% else %}
+                <p>No recommendations available at this time.</p>
+            {% endif %}
+        </div>
+    </section>
 </div>
 
-<!-- Gemini Recommendations Section -->
-{% if wrap.gemini_recommendations %}
-    <h3>Music and Style Recommendations</h3>
-    {% if wrap.gemini_recommendations|length > 0 %}
-        <ul>
-            {% for recommendation in wrap.gemini_recommendations %}
-                <li>{{ recommendation }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>{{ wrap.gemini_recommendations }}</p>
-    {% endif %}
-{% else %}
-    <p>No recommendations available at this time.</p>
-{% endif %}
+<!--&lt;!&ndash; Gemini Recommendations Section &ndash;&gt;-->
+<!--{% if wrap.gemini_recommendations %}-->
+<!--    <h3>Music and Style Recommendations</h3>-->
+<!--    {% if wrap.gemini_recommendations|length > 0 %}-->
+<!--        <ul>-->
+<!--            {% for recommendation in wrap.gemini_recommendations %}-->
+<!--                <li>{{ recommendation }}</li>-->
+<!--            {% endfor %}-->
+<!--        </ul>-->
+<!--    {% else %}-->
+<!--        <p>{{ wrap.gemini_recommendations }}</p>-->
+<!--    {% endif %}-->
+<!--{% else %}-->
+<!--    <p>No recommendations available at this time.</p>-->
+<!--{% endif %}-->
+
 
 <!-- Navigation Dots -->
-<div id="nav-dots">
+<div id="nav-dots" class="dot">
     {% for i in "0123456"|make_list %}
         <span class="dot" onclick="scrollToSlide({{ i }})"></span>
     {% endfor %}

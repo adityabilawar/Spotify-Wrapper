@@ -7,10 +7,10 @@ from django.utils.timezone import now
 class Wrap(models.Model):
     spotify_username = models.CharField(max_length=255)
     product = models.CharField(max_length=50, default="Unknown")
-    top_song = models.CharField(max_length=255, blank=True, null=True)
+    top_song = models.JSONField(max_length=255, blank=True, null=True)
     top_artists = models.JSONField(blank=True, null=True)  # Store list of top artists as JSON
     listened_genre = models.CharField(max_length=255, blank=True, null=True)
-    top_album = models.CharField(max_length=255, blank=True, null=True)
+    top_album = models.JSONField(max_length=255, blank=True, null=True)
     listened_hours = models.FloatField(blank=True, null=True)
     most_listened_artist = models.JSONField(blank=True, null=True)  # Store most listened artist data
     top_artist_tracks = models.JSONField(blank=True, null=True)  # Store list of tracks for most listened artist
@@ -18,6 +18,7 @@ class Wrap(models.Model):
     special_message = models.TextField(blank=True, null=True)
     gemini_recommendations = models.JSONField(blank=True, null=True)  # Store recommendations as JSON
     created_at = models.DateTimeField(default=now)
+    time_range = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return f"Wrap for {self.spotify_username} - {self.created_at.strftime('%Y-%m-%d %H:%M:%S')}"
