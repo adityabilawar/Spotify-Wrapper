@@ -378,7 +378,7 @@ def get_top_tracks_for_artist(access_token, artist_id):
                 'preview_url': track.get('preview_url'),
                 'image_url': track['album']['images'][0]['url'] if track['album']['images'] else None
             }
-            for track in data['tracks'][:5]
+            for track in data['tracks'][:6]
         ]
     return None
 
