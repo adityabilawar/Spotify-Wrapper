@@ -72,16 +72,18 @@
     </section>
 
     <!-- Most Listened Genre Section -->
-    <section class="slide" id="listened-genre">
-        <div class="slide-content">
-            <h2>Most Listened Genre</h2>
-            {% if wrap.listened_genre %}
-                <p>{{ wrap.listened_genre }}</p>
-            {% else %}
-                <p>No data available for most listened genre.</p>
-            {% endif %}
-        </div>
-    </section>
+<section class="slide" id="listened-genre">
+    <div class="slide-content">
+        <h2>Your Most Listened Genre</h2>
+        {% if wrap.listened_genre %}
+            <p>This year, you've immersed yourself in the world of <strong>{{ wrap.listened_genre }}</strong>! From heart-pumping beats to chill vibes, it's been the genre that defined your soundtrack.</p>
+            <p>It's clear that this genre has shaped your musical journey this year — now let's dive into the album you couldn't get enough of!</p>
+        {% else %}
+            <p>No data available for most listened genre.</p>
+        {% endif %}
+    </div>
+</section>
+
 
     <!-- Top Album Section -->
     <section class="slide" id="top-album">
@@ -101,15 +103,13 @@
 
     <!-- Special Message Section -->
     <section class="slide" id="special-message">
-        <div class="slide-content">
-            <h2>Special Message</h2>
-            {% if wrap.special_message %}
-                <p>{{ wrap.special_message }}</p>
-            {% else %}
-                <p>No special message available.</p>
-            {% endif %}
-        </div>
-    </section>
+    <div class="slide-content">
+        <h2>Get Ready for Your Top Songs!</h2>
+        <p>We're about to dive into the music you've been loving the most this year. Get ready to see the top songs from your favorite artist — the ones that have been on repeat!</p>
+        <p>Hold tight, your top tracks are coming up next!</p>
+    </div>
+</section>
+
 
     <!-- Top Tracks from Most Listened Artist Section -->
     <section class="slide" id="top-artist-tracks">
