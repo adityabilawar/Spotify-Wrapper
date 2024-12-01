@@ -384,7 +384,7 @@ def get_top_tracks_for_artist(access_token, artist_id):
 
 def get_most_listened_artist(access_token, time_range):
     headers = {'Authorization': f'Bearer {access_token}'}
-    url = 'https://api.spotify.com/v1/me/top/artists?time_range{time_range}&limit=1'
+    url = f'https://api.spotify.com/v1/me/top/artists?time_range{time_range}&limit=1'
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         data = response.json()
