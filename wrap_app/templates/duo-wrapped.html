@@ -202,26 +202,13 @@
             </div>
         </div>
     </section>
-
-    <!-- Special Message Comparison -->
-    <section class="slide" id="special-message">
-        <div class="slide-content">
-            <h2>Special Messages</h2>
-            <div style="display: flex; gap: 50px;">
-                <!-- Wrap1 Special Message -->
-                <div style="flex: 1; text-align: center;">
-                    <h3>{{ wrap1.spotify_username }}</h3>
-                    <p>{{ wrap1.special_message }}</p>
-                </div>
-                <!-- Wrap2 Special Message -->
-                <div style="flex: 1; text-align: center;">
-                    <h3>{{ wrap2.spotify_username }}</h3>
-                    <p>{{ wrap2.special_message }}</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
+    <section class="slide" id="gemini-comparison-intro">
+    <div class="slide-content">
+        <h2>Get Ready to See What Google Gemini Thinks You Have in Common!</h2>
+        <p>We're about to reveal what the advanced AI from Google Gemini believes you and your duo would share in terms of music taste, genres, and styles.</p>
+        <p>Excited to find out how similar your musical preferences are? Keep watching!</p>
+    </div>
+</section>
     <!-- Gemini Recommendations Comparison -->
     {% if wrap1.gemini_recommendations or wrap2.gemini_recommendations %}
     <section class="slide" id="gemini-recommendations">
@@ -250,6 +237,17 @@
         </div>
     </section>
     {% endif %}
+    {% if duo_gemini_recommendations %}
+    <section class="slide" id="duo_gemini_recommendations">
+        <div class="slide-content">
+            <h2>Gemini's Take:</h2>
+            <p>{{duo_gemini_recommendations}}</p>
+        </div>
+    </section>
+    {% else %}
+<!-- No Duo Gemini Recommendations available -->
+<p>No Gemini recommendations available for this duo.</p>
+{% endif %}
 </div>
 
 <script src="{% static 'wrap_app/static/scroll.js' %}"></script>

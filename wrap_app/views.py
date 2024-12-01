@@ -471,7 +471,8 @@ def generate_duo_wrap(request):
     for wrap in all_wraps:
         if wrap.spotify_username == current_user:
             wrap2 = wrap
-    duoWrap = DuoWrap.objects.create(wrap1 = wrap1, wrap2 = wrap2)
+    duo_gemini_recommendations = get_duo_recommendations_from_gemini(wrap1, wrap2)
+    duoWrap = DuoWrap.objects.create(wrap1 = wrap1, wrap2 = wrap2, duo_gemini_recommendations=duo_gemini_recommendations)
 
     return redirect('view_duo_wrap', duowrap_id = duoWrap.id)
 
@@ -486,7 +487,29 @@ def view_duo_wrap(request, duowrap_id):
     context = {
         'wrap1': wrap.wrap1,
         'wrap2': wrap.wrap2,
+        'duo_gemini_recommendations': wrap.duo_gemini_recommendations
     }
+    print(wrap.duo_gemini_recommendations)
 
     # Render the wrap details in the view_wrap.html template
     return render(request, 'duo-wrapped.html', context)
+
+def get_duo_recommendations_from_gemini(wrap1, wrap2):
+    genai.configure(api_key=os.getenv("GEMINI_KEY"))
+    model = genai.GenerativeModel(model_name="gemini-1.5-flash")
+    input_text = (
+        f"I am going to give you two users' spotify listening habits and I want you to compare their tastes."
+        f"{wrap1.spotify_username}'s favorite song is '{wrap1.top_song['title']}' by {wrap1.top_song['artist']} from the album '{wrap1.top_song['album']}'. "
+        f" Their top artists are {[artist['name'] for artist in wrap1.top_artists]}. "
+        f"{wrap2.spotify_username}'s favorite song is '{wrap2.top_song['title']}' by {wrap2.top_song['artist']} from the album '{wrap2.top_song['album']}'. "
+        f"Their top artists are {[artist['name'] for artist in wrap2.top_artists]}."
+        "In five sentences, please compare what these two users may both like to listen to. Analyze what genres they may both enjoy and what clothes"
+        "they may both wear based on music choices."
+    )
+    print(input_text)
+    try:
+        response = model.generate_content(input_text)
+        return response.text
+    except Exception as e:
+        print(f"Error querying Gemini API: {e}")
+        return "There was an issue getting recommendations."

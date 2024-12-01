@@ -30,6 +30,8 @@ class DuoWrap(models.Model):
     wrap1 = models.ForeignKey(Wrap, on_delete=models.CASCADE, related_name='duowraps_as_first')
     wrap2 = models.ForeignKey(Wrap, on_delete=models.CASCADE, related_name='duowraps_as_second')
     created_at = models.DateTimeField(default=now)
+    duo_gemini_recommendations = models.JSONField(blank=True, null=True)  # Store recommendations as JSON
+
 
     def __str__(self):
         return f"DuoWrap of {self.wrap1.spotify_username} and {self.wrap2.spotify_username}"
